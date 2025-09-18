@@ -1,0 +1,38 @@
+.main{
+    font-family: Arial, sans-serif;
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.productos{
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    padding: 15px;
+}
+
+.prod{
+    width: 18rem;
+}
+
+.precio{
+    display: block;
+    align-items: center;
+    font-size: 30px;   
+}
+
+.filtros {
+    width: 250px;
+    border-right: 1px solid #ccc;
+    padding-right: 1rem;
+}
+
+.filtro-grupo {
+    margin-bottom: 1rem;
+}
+
+.filtro-grupo label {
+    display: block;
+    margin: 5px 0;
+}
