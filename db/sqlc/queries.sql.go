@@ -32,7 +32,7 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) error {
 }
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO usuario (nombre, email) VALUES ($1, $2)
+INSERT INTO usuario (nombre, email) VALUES ($1, $2) RETURNING id_usuario, nombre, email
 `
 
 type CreateUserParams struct {
@@ -40,9 +40,16 @@ type CreateUserParams struct {
 	Email  string `json:"email"`
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
-	_, err := q.db.ExecContext(ctx, createUser, arg.Nombre, arg.Email)
-	return err
+type CreateUserRow struct {
+	ID     int32  `json:"id"`
+	Nombre string `json:"name"`
+	Email  string `json:"email"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+	var row CreateUserRow
+	err := q.db.QueryRowContext(ctx, createUser, arg.Nombre, arg.Email).Scan(&row.ID, &row.Nombre, &row.Email)
+	return row, err
 }
 
 const createVenta = `-- name: CreateVenta :exec
@@ -68,12 +75,21 @@ func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) error 
 	return err
 }
 
-const delateProd = `-- name: DelateProd :exec
+const deleteProd = `-- name: DeleteProd :exec
 DELETE FROM producto WHERE id = $1
 `
 
-func (q *Queries) DelateProd(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, delateProd, id)
+func (q *Queries) DeleteProd(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteProd, id)
+	return err
+}
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM usuario WHERE id_usuario = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, idUsuario int32) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, idUsuario)
 	return err
 }
 
@@ -153,7 +169,7 @@ func (q *Queries) GetVenta_usuario(ctx context.Context, idUsuario int32) (Ventum
 }
 
 const listProd = `-- name: ListProd :many
-SELECT id, nombre, descripcion, precio, stock, categoria FROM producto
+SELECT id, nombre, descripcion, precio, stock, categoria FROM producto ORDER BY nombre
 `
 
 func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
@@ -173,6 +189,33 @@ func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
 			&i.Stock,
 			&i.Categoria,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listUsers = `-- name: ListUsers :many
+SELECT id_usuario, nombre, email FROM usuario ORDER BY nombre
+`
+
+func (q *Queries) ListUsers(ctx context.Context) ([]Usuario, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Usuario
+	for rows.Next() {
+		var i Usuario
+		if err := rows.Scan(&i.IDUsuario, &i.Nombre, &i.Email); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -245,5 +288,20 @@ type UpdateProductoStockParams struct {
 
 func (q *Queries) UpdateProductoStock(ctx context.Context, arg UpdateProductoStockParams) error {
 	_, err := q.db.ExecContext(ctx, updateProductoStock, arg.ID, arg.Stock)
+	return err
+}
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE usuario SET nombre = $2, email = $3 WHERE id_usuario = $1
+`
+
+type UpdateUserParams struct {
+	IDUsuario int32  `json:"id_usuario"`
+	Nombre    string `json:"nombre"`
+	Email     string `json:"email"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser, arg.IDUsuario, arg.Nombre, arg.Email)
 	return err
 }
