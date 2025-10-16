@@ -67,3 +67,5 @@ El sistema desarrollado corresponde a un **Carrito de Compras**, cuyo dominio in
 Tomas Ilari, Martino Masson, Juan Abraham
 
 Repositorio: [GitHub - Carrito](https://github.com/IlariTomas/Carrito)
+
+Para ejecutar las pruebas de hurl usar el siguiente comando: hurl --test requests.hurl

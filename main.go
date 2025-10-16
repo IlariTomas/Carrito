@@ -120,7 +120,7 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
+		w.WriteHeader(http.StatusCreated) //devuelve HTTP 201
 		json.NewEncoder(w).Encode(user)
 	}
 }
@@ -133,7 +133,7 @@ func listUsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(w).Encode(users) // Esto es clave
+		json.NewEncoder(w).Encode(users) // aca se aniade la json los users
 	}
 }
 
