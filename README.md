@@ -10,19 +10,31 @@ El objetivo es gestionar productos, usuarios y operaciones de compra, integrando
 
 ```
 Carrito/
-│── db/               # Configuración de base de datos
-│   ├── queries/      # Consultas SQL
-│   ├── schema/       # Esquemas de la base de datos
-│   └── sqlc/         # Código generado por SQLC
+├── api/                # Lógica principal del servidor Go
+│ ├── main.go           # Punto de entrada del servidor
+│ ├── models.go         # Definición de estructuras y modelos de datos
+│ └── db/               # Configuración y acceso a la base de datos
+│ ├── schema/           # Esquemas SQL (tablas, constraints, etc.)
+│ │ └── schema.sql
+│ ├── queries/          # Consultas SQL definidas para sqlc
+│ │ └── queries.sql
+│ ├── sqlc/             # Código Go generado automáticamente por sqlc
+│ │ ├── db.go
+│ │ └── models.go
+│ └── sqlc.yaml         # Configuración de sqlc
 │
-│── js/               # Archivos JavaScript para frontend
-│── static/           # Archivos estáticos (CSS, imágenes, etc.)
-│── .gitignore        # Archivos a ignorar por Git
-│── go.mod            # Dependencias del proyecto Go
-│── index.html        # Página principal del frontend
-│── main.go           # Punto de entrada del servidor Go
-│── README.md         # Documentación del proyecto
-│── sqlc.yaml         # Configuración de SQLC
+├── js/                 # Archivos JavaScript para el frontend
+├── static/             # Archivos estáticos (CSS, imágenes, etc.)
+├── tester/             # Pruebas y archivos de testing (por ejemplo requests.hurl)
+│ └── requests.hurl
+│
+├── Dockerfile          # Imagen Docker del proyecto
+├── docker-compose.yml  # Configuración para levantar la app con Docker
+├── go.mod              # Módulo Go
+├── go.sum              # Dependencias verificadas de Go
+├── index.html          # Página principal del frontend
+├── README.md           # Documentación del proyecto
+└── .gitignore          # Archivos y carpetas a ignorar por Git
 ```
 
 ---
