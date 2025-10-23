@@ -58,14 +58,12 @@ El sistema desarrollado corresponde a un **Carrito de Compras**, cuyo dominio in
 
 ##  Requisitos
 
-- [Go 1.20+](https://go.dev/dl/)
-- [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html)
-- Navegador web actualizado
+Instalar docker-compose
 
----
+Ejecutar el siguiente comando para levantar los contenedores
+docker-compose up --build
+
 
 Tomas Ilari, Martino Masson, Juan Abraham
 
 Repositorio: [GitHub - Carrito](https://github.com/IlariTomas/Carrito)
-
-Para ejecutar las pruebas de hurl usar el siguiente comando: hurl --test requests.hurl

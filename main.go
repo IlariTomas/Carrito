@@ -13,7 +13,9 @@ import (
 	_ "github.com/lib/pq"
 )
 
+
 func main() {
+	
 	mux := http.NewServeMux()
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -47,12 +49,14 @@ func main() {
         </body></html>`)
 	})
 
-	connStr := "user=postgres password=XYZ dbname=tpcarrito host=localhost port=5432 sslmode=disable"
-	db, err1 := sql.Open("postgres", connStr)
+	connStr := "postgres://postgres:postgres@db:5432/apirest?sslmode=disable" 
+    db, err1 := sql.Open("postgres", connStr)
+
 	if err1 != nil {
 		log.Fatalf("failed to connect to DB: %v", err1)
 	}
 	defer db.Close()
+
 	queries := sqlc.New(db)
 	//ctx := context.Background()
 
@@ -120,7 +124,7 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated) //devuelve HTTP 201
+		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(user)
 	}
 }
@@ -133,7 +137,7 @@ func listUsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(w).Encode(users) // aca se aniade la json los users
+		json.NewEncoder(w).Encode(users) // Esto es clave
 	}
 }
 
