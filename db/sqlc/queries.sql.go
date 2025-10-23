@@ -11,19 +11,19 @@ import (
 )
 
 const createProd = `-- name: CreateProd :exec
-INSERT INTO producto (nombre, descripcion, precio, categoria) VALUES ($1,$2, $3, $4)
+INSERT INTO producto (nombre_producto, descripcion, precio, categoria) VALUES ($1,$2, $3, $4)
 `
 
 type CreateProdParams struct {
-	Nombre      string         `json:"nombre"`
-	Descripcion sql.NullString `json:"descripcion"`
-	Precio      string         `json:"precio"`
-	Categoria   sql.NullString `json:"categoria"`
+	NombreProducto string         `json:"nombre_producto"`
+	Descripcion    sql.NullString `json:"descripcion"`
+	Precio         string         `json:"precio"`
+	Categoria      sql.NullString `json:"categoria"`
 }
 
 func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) error {
 	_, err := q.db.ExecContext(ctx, createProd,
-		arg.Nombre,
+		arg.NombreProducto,
 		arg.Descripcion,
 		arg.Precio,
 		arg.Categoria,
@@ -31,36 +31,31 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) error {
 	return err
 }
 
-const createUser = `-- name: CreateUser :exec
-INSERT INTO usuario (nombre, email) VALUES ($1, $2) RETURNING id_usuario, nombre, email
+const createUser = `-- name: CreateUser :one
+INSERT INTO usuario (nombre_usuario, email) VALUES ($1, $2) RETURNING id_usuario, nombre_usuario, email
 `
 
 type CreateUserParams struct {
-	Nombre string `json:"nombre"`
-	Email  string `json:"email"`
+	NombreUsuario string `json:"nombre_usuario"`
+	Email         string `json:"email"`
 }
 
-type CreateUserRow struct {
-	ID     int32  `json:"id"`
-	Nombre string `json:"name"`
-	Email  string `json:"email"`
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	var row CreateUserRow
-	err := q.db.QueryRowContext(ctx, createUser, arg.Nombre, arg.Email).Scan(&row.ID, &row.Nombre, &row.Email)
-	return row, err
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Usuario, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.NombreUsuario, arg.Email)
+	var i Usuario
+	err := row.Scan(&i.IDUsuario, &i.NombreUsuario, &i.Email)
+	return i, err
 }
 
 const createVenta = `-- name: CreateVenta :exec
-INSERT INTO venta (id_producto, id_venta, cantidad, precio, fecha) VALUES ($1,$2, $3, $4, $5)
+INSERT INTO venta (id_producto, id_venta, cantidad, total, fecha) VALUES ($1,$2, $3, $4, $5)
 `
 
 type CreateVentaParams struct {
 	IDProducto int32        `json:"id_producto"`
 	IDVenta    int32        `json:"id_venta"`
 	Cantidad   int32        `json:"cantidad"`
-	Precio     string       `json:"precio"`
+	Total      string       `json:"total"`
 	Fecha      sql.NullTime `json:"fecha"`
 }
 
@@ -69,18 +64,18 @@ func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) error 
 		arg.IDProducto,
 		arg.IDVenta,
 		arg.Cantidad,
-		arg.Precio,
+		arg.Total,
 		arg.Fecha,
 	)
 	return err
 }
 
 const deleteProd = `-- name: DeleteProd :exec
-DELETE FROM producto WHERE id = $1
+DELETE FROM producto WHERE id_producto = $1
 `
 
-func (q *Queries) DeleteProd(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteProd, id)
+func (q *Queries) DeleteProd(ctx context.Context, idProducto int32) error {
+	_, err := q.db.ExecContext(ctx, deleteProd, idProducto)
 	return err
 }
 
@@ -94,21 +89,21 @@ func (q *Queries) DeleteUser(ctx context.Context, idUsuario int32) error {
 }
 
 const getProd = `-- name: GetProd :one
-SELECT nombre, descripcion, precio, categoria FROM producto WHERE id = $1
+SELECT nombre_producto, descripcion, precio, categoria FROM producto WHERE id_producto = $1
 `
 
 type GetProdRow struct {
-	Nombre      string         `json:"nombre"`
-	Descripcion sql.NullString `json:"descripcion"`
-	Precio      string         `json:"precio"`
-	Categoria   sql.NullString `json:"categoria"`
+	NombreProducto string         `json:"nombre_producto"`
+	Descripcion    sql.NullString `json:"descripcion"`
+	Precio         string         `json:"precio"`
+	Categoria      sql.NullString `json:"categoria"`
 }
 
-func (q *Queries) GetProd(ctx context.Context, id int32) (GetProdRow, error) {
-	row := q.db.QueryRowContext(ctx, getProd, id)
+func (q *Queries) GetProd(ctx context.Context, idProducto int32) (GetProdRow, error) {
+	row := q.db.QueryRowContext(ctx, getProd, idProducto)
 	var i GetProdRow
 	err := row.Scan(
-		&i.Nombre,
+		&i.NombreProducto,
 		&i.Descripcion,
 		&i.Precio,
 		&i.Categoria,
@@ -117,23 +112,23 @@ func (q *Queries) GetProd(ctx context.Context, id int32) (GetProdRow, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT nombre, email FROM usuario WHERE id_usuario = $1
+SELECT nombre_usuario, email FROM usuario WHERE id_usuario = $1
 `
 
 type GetUserRow struct {
-	Nombre string `json:"nombre"`
-	Email  string `json:"email"`
+	NombreUsuario string `json:"nombre_usuario"`
+	Email         string `json:"email"`
 }
 
 func (q *Queries) GetUser(ctx context.Context, idUsuario int32) (GetUserRow, error) {
 	row := q.db.QueryRowContext(ctx, getUser, idUsuario)
 	var i GetUserRow
-	err := row.Scan(&i.Nombre, &i.Email)
+	err := row.Scan(&i.NombreUsuario, &i.Email)
 	return i, err
 }
 
 const getVenta = `-- name: GetVenta :one
-SELECT id_venta, id_producto, id_usuario, cantidad, precio, fecha FROM venta WHERE id_venta = $1
+SELECT id_venta, id_producto, id_usuario, cantidad, total, fecha FROM venta WHERE id_venta = $1
 `
 
 func (q *Queries) GetVenta(ctx context.Context, idVenta int32) (Ventum, error) {
@@ -144,14 +139,14 @@ func (q *Queries) GetVenta(ctx context.Context, idVenta int32) (Ventum, error) {
 		&i.IDProducto,
 		&i.IDUsuario,
 		&i.Cantidad,
-		&i.Precio,
+		&i.Total,
 		&i.Fecha,
 	)
 	return i, err
 }
 
 const getVenta_usuario = `-- name: GetVenta_usuario :one
-SELECT id_venta, id_producto, id_usuario, cantidad, precio, fecha FROM venta WHERE id_usuario = $1
+SELECT id_venta, id_producto, id_usuario, cantidad, total, fecha FROM venta WHERE id_usuario = $1
 `
 
 func (q *Queries) GetVenta_usuario(ctx context.Context, idUsuario int32) (Ventum, error) {
@@ -162,14 +157,14 @@ func (q *Queries) GetVenta_usuario(ctx context.Context, idUsuario int32) (Ventum
 		&i.IDProducto,
 		&i.IDUsuario,
 		&i.Cantidad,
-		&i.Precio,
+		&i.Total,
 		&i.Fecha,
 	)
 	return i, err
 }
 
 const listProd = `-- name: ListProd :many
-SELECT id, nombre, descripcion, precio, stock, categoria FROM producto ORDER BY nombre
+SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria FROM producto ORDER BY nombre_producto
 `
 
 func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
@@ -182,8 +177,8 @@ func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
 	for rows.Next() {
 		var i Producto
 		if err := rows.Scan(
-			&i.ID,
-			&i.Nombre,
+			&i.IDProducto,
+			&i.NombreProducto,
 			&i.Descripcion,
 			&i.Precio,
 			&i.Stock,
@@ -203,7 +198,7 @@ func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id_usuario, nombre, email FROM usuario ORDER BY nombre
+SELECT id_usuario, nombre_usuario, email FROM usuario ORDER BY nombre_usuario
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]Usuario, error) {
@@ -215,7 +210,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Usuario, error) {
 	var items []Usuario
 	for rows.Next() {
 		var i Usuario
-		if err := rows.Scan(&i.IDUsuario, &i.Nombre, &i.Email); err != nil {
+		if err := rows.Scan(&i.IDUsuario, &i.NombreUsuario, &i.Email); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -230,7 +225,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]Usuario, error) {
 }
 
 const listVentas = `-- name: ListVentas :many
-SELECT id_venta, id_producto, id_usuario, cantidad, precio, fecha FROM venta WHERE id_usuario = $1
+SELECT id_venta, id_producto, id_usuario, cantidad, total, fecha FROM venta WHERE id_usuario = $1
 `
 
 func (q *Queries) ListVentas(ctx context.Context, idUsuario int32) ([]Ventum, error) {
@@ -247,7 +242,7 @@ func (q *Queries) ListVentas(ctx context.Context, idUsuario int32) ([]Ventum, er
 			&i.IDProducto,
 			&i.IDUsuario,
 			&i.Cantidad,
-			&i.Precio,
+			&i.Total,
 			&i.Fecha,
 		); err != nil {
 			return nil, err
@@ -264,44 +259,44 @@ func (q *Queries) ListVentas(ctx context.Context, idUsuario int32) ([]Ventum, er
 }
 
 const updateProductoPrecio = `-- name: UpdateProductoPrecio :exec
-UPDATE producto SET precio = $2 WHERE id = $1
+UPDATE producto SET precio = $2 WHERE id_producto = $1
 `
 
 type UpdateProductoPrecioParams struct {
-	ID     int32  `json:"id"`
-	Precio string `json:"precio"`
+	IDProducto int32  `json:"id_producto"`
+	Precio     string `json:"precio"`
 }
 
 func (q *Queries) UpdateProductoPrecio(ctx context.Context, arg UpdateProductoPrecioParams) error {
-	_, err := q.db.ExecContext(ctx, updateProductoPrecio, arg.ID, arg.Precio)
+	_, err := q.db.ExecContext(ctx, updateProductoPrecio, arg.IDProducto, arg.Precio)
 	return err
 }
 
 const updateProductoStock = `-- name: UpdateProductoStock :exec
-UPDATE producto SET stock = $2 WHERE id = $1
+UPDATE producto SET stock = $2 WHERE id_producto = $1
 `
 
 type UpdateProductoStockParams struct {
-	ID    int32 `json:"id"`
-	Stock int32 `json:"stock"`
+	IDProducto int32 `json:"id_producto"`
+	Stock      int32 `json:"stock"`
 }
 
 func (q *Queries) UpdateProductoStock(ctx context.Context, arg UpdateProductoStockParams) error {
-	_, err := q.db.ExecContext(ctx, updateProductoStock, arg.ID, arg.Stock)
+	_, err := q.db.ExecContext(ctx, updateProductoStock, arg.IDProducto, arg.Stock)
 	return err
 }
 
 const updateUser = `-- name: UpdateUser :exec
-UPDATE usuario SET nombre = $2, email = $3 WHERE id_usuario = $1
+UPDATE usuario SET nombre_usuario = $2, email = $3 WHERE id_usuario = $1
 `
 
 type UpdateUserParams struct {
-	IDUsuario int32  `json:"id_usuario"`
-	Nombre    string `json:"nombre"`
-	Email     string `json:"email"`
+	IDUsuario     int32  `json:"id_usuario"`
+	NombreUsuario string `json:"nombre_usuario"`
+	Email         string `json:"email"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.ExecContext(ctx, updateUser, arg.IDUsuario, arg.Nombre, arg.Email)
+	_, err := q.db.ExecContext(ctx, updateUser, arg.IDUsuario, arg.NombreUsuario, arg.Email)
 	return err
 }

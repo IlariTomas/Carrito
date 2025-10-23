@@ -9,18 +9,18 @@ import (
 )
 
 type Producto struct {
-	ID          int32          `json:"id"`
-	Nombre      string         `json:"nombre"`
-	Descripcion sql.NullString `json:"descripcion"`
-	Precio      string         `json:"precio"`
-	Stock       int32          `json:"stock"`
-	Categoria   sql.NullString `json:"categoria"`
+	IDProducto     int32          `json:"id_producto"`
+	NombreProducto string         `json:"nombre_producto"`
+	Descripcion    sql.NullString `json:"descripcion"`
+	Precio         string         `json:"precio"`
+	Stock          int32          `json:"stock"`
+	Categoria      sql.NullString `json:"categoria"`
 }
 
 type Usuario struct {
-	IDUsuario int32  `json:"id_usuario"`
-	Nombre    string `json:"nombre"`
-	Email     string `json:"email"`
+	IDUsuario     int32  `json:"id_usuario"`
+	NombreUsuario string `json:"nombre_usuario"`
+	Email         string `json:"email"`
 }
 
 type Ventum struct {
@@ -28,6 +28,6 @@ type Ventum struct {
 	IDProducto int32        `json:"id_producto"`
 	IDUsuario  int32        `json:"id_usuario"`
 	Cantidad   int32        `json:"cantidad"`
-	Precio     string       `json:"precio"`
+	Total      string       `json:"total"`
 	Fecha      sql.NullTime `json:"fecha"`
 }

@@ -112,7 +112,7 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		if req.Nombre == "" || req.Email == "" {
+		if req.NombreUsuario == "" || req.Email == "" {
 			http.Error(w, "Nombre y Email son requeridos", http.StatusBadRequest)
 			return
 		}
@@ -180,15 +180,15 @@ func updateUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		if req.Nombre == "" || req.Email == "" {
+		if req.NombreUsuario == "" || req.Email == "" {
 			http.Error(w, "Nombre y Email son requeridos", http.StatusBadRequest)
 			return
 		}
 
 		err = queries.UpdateUser(r.Context(), sqlc.UpdateUserParams{
-			IDUsuario: int32(id),
-			Nombre:    req.Nombre,
-			Email:     req.Email,
+			IDUsuario:     int32(id),
+			NombreUsuario: req.NombreUsuario,
+			Email:         req.Email,
 		})
 		if err != nil {
 			http.Error(w, "Error al actualizar usuario: "+err.Error(), http.StatusInternalServerError)
