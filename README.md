@@ -11,24 +11,30 @@ El objetivo es gestionar productos, usuarios y operaciones de compra, integrando
 ```
 Carrito/
 ├── api/                # Lógica principal del servidor Go
-│ ├── main.go           # Punto de entrada del servidor
-│ ├── models.go         # Definición de estructuras y modelos de datos
-│ └── db/               # Configuración y acceso a la base de datos
+│
+├── db/                 # Configuración y acceso a la base de datos
 │ ├── schema/           # Esquemas SQL (tablas, constraints, etc.)
 │ │ └── schema.sql
 │ ├── queries/          # Consultas SQL definidas para sqlc
 │ │ └── queries.sql
-│ ├── sqlc/             # Código Go generado automáticamente por sqlc
-│ │ ├── db.go
-│ │ └── models.go
-│ └── sqlc.yaml         # Configuración de sqlc
+│ └── sqlc/             # Código Go generado automáticamente por sqlc
+│   ├── db.go
+│   ├── models.go
+│   └── queries.sql.go
+│
+│── handle/             # Código Go generado automáticamente por sqlc
+│ ├── product.go
+│ ├── user.go
+│ └── ventas.go
 │
 ├── js/                 # Archivos JavaScript para el frontend
 ├── static/             # Archivos estáticos (CSS, imágenes, etc.)
 ├── tester/             # Pruebas y archivos de testing (por ejemplo requests.hurl)
+│ ├── Dockerfile
 │ └── requests.hurl
 │
-├── Dockerfile          # Imagen Docker del proyecto
+├── sqlc.yaml           # Configuración de sqlc
+├── main.go         
 ├── docker-compose.yml  # Configuración para levantar la app con Docker
 ├── go.mod              # Módulo Go
 ├── go.sum              # Dependencias verificadas de Go
