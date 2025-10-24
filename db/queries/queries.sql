@@ -1,14 +1,14 @@
 -- name: CreateProd :one
-INSERT INTO producto (nombre_producto, descripcion, precio, categoria) VALUES ($1,$2, $3, $4) RETURNING nombre_producto, descripcion, precio, categoria;
+INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria) VALUES ($1,$2, $3, $4, $5) RETURNING nombre_producto, descripcion, precio, stock, categoria;
 
 -- name: CreateUser :one
 INSERT INTO usuario (nombre_usuario, email) VALUES ($1, $2) RETURNING id_usuario, nombre_usuario, email;
 
 -- name: CreateVenta :one
-INSERT INTO venta (id_producto, id_venta, cantidad, total, fecha) VALUES ($1,$2, $3, $4, $5) RETURNING id_producto, id_venta, cantidad, total, fecha;
+INSERT INTO venta (id_producto,id_usuario, cantidad, total, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING id_producto, id_usuario, cantidad, total, fecha;
 
 -- name: GetProd :one
-SELECT nombre_producto, descripcion, precio, categoria FROM producto WHERE id_producto = $1;
+SELECT nombre_producto, descripcion, stock, precio, categoria FROM producto WHERE id_producto = $1;
 
 -- name: GetVenta :one
 SELECT * FROM venta WHERE id_venta = $1;
@@ -32,7 +32,7 @@ SELECT * FROM venta WHERE id_usuario = $1;
 SELECT * FROM venta ORDER BY fecha;
 
 -- name: UpdateProducto :exec
-UPDATE producto SET nombre_producto = $2, descripcion = $3, precio = $4, categoria = $5 WHERE id_producto = $1;
+UPDATE producto SET nombre_producto = $2, descripcion = $3, stock = $4, precio = $5, categoria = $6 WHERE id_producto = $1;
 
 -- name: UpdateProductoPrecio :exec
 UPDATE producto SET precio = $2 WHERE id_producto = $1;

@@ -7,25 +7,26 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createProd = `-- name: CreateProd :one
-INSERT INTO producto (nombre_producto, descripcion, precio, categoria) VALUES ($1,$2, $3, $4) RETURNING nombre_producto, descripcion, precio, categoria
+INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria) VALUES ($1,$2, $3, $4, $5) RETURNING nombre_producto, descripcion, precio, stock, categoria
 `
 
 type CreateProdParams struct {
-	NombreProducto string         `json:"nombre_producto"`
-	Descripcion    sql.NullString `json:"descripcion"`
-	Precio         string         `json:"precio"`
-	Categoria      sql.NullString `json:"categoria"`
+	NombreProducto string `json:"nombre_producto"`
+	Descripcion    string `json:"descripcion"`
+	Precio         string `json:"precio"`
+	Stock          int32  `json:"stock"`
+	Categoria      string `json:"categoria"`
 }
 
 type CreateProdRow struct {
-	NombreProducto string         `json:"nombre_producto"`
-	Descripcion    sql.NullString `json:"descripcion"`
-	Precio         string         `json:"precio"`
-	Categoria      sql.NullString `json:"categoria"`
+	NombreProducto string `json:"nombre_producto"`
+	Descripcion    string `json:"descripcion"`
+	Precio         string `json:"precio"`
+	Stock          int32  `json:"stock"`
+	Categoria      string `json:"categoria"`
 }
 
 func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateProdRow, error) {
@@ -33,6 +34,7 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateP
 		arg.NombreProducto,
 		arg.Descripcion,
 		arg.Precio,
+		arg.Stock,
 		arg.Categoria,
 	)
 	var i CreateProdRow
@@ -40,6 +42,7 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateP
 		&i.NombreProducto,
 		&i.Descripcion,
 		&i.Precio,
+		&i.Stock,
 		&i.Categoria,
 	)
 	return i, err
@@ -62,29 +65,29 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Usuario
 }
 
 const createVenta = `-- name: CreateVenta :one
-INSERT INTO venta (id_producto, id_venta, cantidad, total, fecha) VALUES ($1,$2, $3, $4, $5) RETURNING id_producto, id_venta, cantidad, total, fecha
+INSERT INTO venta (id_producto,id_usuario, cantidad, total, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING id_producto, id_usuario, cantidad, total, fecha
 `
 
 type CreateVentaParams struct {
-	IDProducto int32        `json:"id_producto"`
-	IDVenta    int32        `json:"id_venta"`
-	Cantidad   int32        `json:"cantidad"`
-	Total      string       `json:"total"`
-	Fecha      sql.NullTime `json:"fecha"`
+	IDProducto int32  `json:"id_producto"`
+	IDUsuario  int32  `json:"id_usuario"`
+	Cantidad   int32  `json:"cantidad"`
+	Total      string `json:"total"`
+	Fecha      string `json:"fecha"`
 }
 
 type CreateVentaRow struct {
-	IDProducto int32        `json:"id_producto"`
-	IDVenta    int32        `json:"id_venta"`
-	Cantidad   int32        `json:"cantidad"`
-	Total      string       `json:"total"`
-	Fecha      sql.NullTime `json:"fecha"`
+	IDProducto int32  `json:"id_producto"`
+	IDUsuario  int32  `json:"id_usuario"`
+	Cantidad   int32  `json:"cantidad"`
+	Total      string `json:"total"`
+	Fecha      string `json:"fecha"`
 }
 
 func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (CreateVentaRow, error) {
 	row := q.db.QueryRowContext(ctx, createVenta,
 		arg.IDProducto,
-		arg.IDVenta,
+		arg.IDUsuario,
 		arg.Cantidad,
 		arg.Total,
 		arg.Fecha,
@@ -92,7 +95,7 @@ func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Creat
 	var i CreateVentaRow
 	err := row.Scan(
 		&i.IDProducto,
-		&i.IDVenta,
+		&i.IDUsuario,
 		&i.Cantidad,
 		&i.Total,
 		&i.Fecha,
@@ -128,14 +131,15 @@ func (q *Queries) DeleteVenta(ctx context.Context, idVenta int32) error {
 }
 
 const getProd = `-- name: GetProd :one
-SELECT nombre_producto, descripcion, precio, categoria FROM producto WHERE id_producto = $1
+SELECT nombre_producto, descripcion, stock, precio, categoria FROM producto WHERE id_producto = $1
 `
 
 type GetProdRow struct {
-	NombreProducto string         `json:"nombre_producto"`
-	Descripcion    sql.NullString `json:"descripcion"`
-	Precio         string         `json:"precio"`
-	Categoria      sql.NullString `json:"categoria"`
+	NombreProducto string `json:"nombre_producto"`
+	Descripcion    string `json:"descripcion"`
+	Stock          int32  `json:"stock"`
+	Precio         string `json:"precio"`
+	Categoria      string `json:"categoria"`
 }
 
 func (q *Queries) GetProd(ctx context.Context, idProducto int32) (GetProdRow, error) {
@@ -144,6 +148,7 @@ func (q *Queries) GetProd(ctx context.Context, idProducto int32) (GetProdRow, er
 	err := row.Scan(
 		&i.NombreProducto,
 		&i.Descripcion,
+		&i.Stock,
 		&i.Precio,
 		&i.Categoria,
 	)
@@ -332,15 +337,16 @@ func (q *Queries) ListVentasUsuario(ctx context.Context, idUsuario int32) ([]Ven
 }
 
 const updateProducto = `-- name: UpdateProducto :exec
-UPDATE producto SET nombre_producto = $2, descripcion = $3, precio = $4, categoria = $5 WHERE id_producto = $1
+UPDATE producto SET nombre_producto = $2, descripcion = $3, stock = $4, precio = $5, categoria = $6 WHERE id_producto = $1
 `
 
 type UpdateProductoParams struct {
-	IDProducto     int32          `json:"id_producto"`
-	NombreProducto string         `json:"nombre_producto"`
-	Descripcion    sql.NullString `json:"descripcion"`
-	Precio         string         `json:"precio"`
-	Categoria      sql.NullString `json:"categoria"`
+	IDProducto     int32  `json:"id_producto"`
+	NombreProducto string `json:"nombre_producto"`
+	Descripcion    string `json:"descripcion"`
+	Stock          int32  `json:"stock"`
+	Precio         string `json:"precio"`
+	Categoria      string `json:"categoria"`
 }
 
 func (q *Queries) UpdateProducto(ctx context.Context, arg UpdateProductoParams) error {
@@ -348,6 +354,7 @@ func (q *Queries) UpdateProducto(ctx context.Context, arg UpdateProductoParams) 
 		arg.IDProducto,
 		arg.NombreProducto,
 		arg.Descripcion,
+		arg.Stock,
 		arg.Precio,
 		arg.Categoria,
 	)
@@ -402,10 +409,10 @@ UPDATE venta SET cantidad = $2, total = $3, fecha = $4 WHERE id_venta = $1
 `
 
 type UpdateVentaParams struct {
-	IDVenta  int32        `json:"id_venta"`
-	Cantidad int32        `json:"cantidad"`
-	Total    string       `json:"total"`
-	Fecha    sql.NullTime `json:"fecha"`
+	IDVenta  int32  `json:"id_venta"`
+	Cantidad int32  `json:"cantidad"`
+	Total    string `json:"total"`
+	Fecha    string `json:"fecha"`
 }
 
 func (q *Queries) UpdateVenta(ctx context.Context, arg UpdateVentaParams) error {
