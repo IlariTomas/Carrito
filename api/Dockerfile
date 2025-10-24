@@ -13,6 +13,7 @@
     COPY index.html .
     COPY static ./static
     COPY db ./db
+    COPY handle ./handle
 
     # Compila el binario
     RUN go build -o carrito .
