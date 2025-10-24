@@ -22,7 +22,7 @@ Carrito/
 │   ├── models.go
 │   └── queries.sql.go
 │
-│── handle/             # Código Go generado automáticamente por sqlc
+│── handle/             # Código Go encargado de manejar operaciones CRUD
 │ ├── product.go
 │ ├── user.go
 │ └── ventas.go
