@@ -22,15 +22,14 @@ HTTP 200
 jsonpath "$[*].nombre_usuario" exists
 
 # === Obtener un usuario por ID ===
-GET {{host}}/users/1
+GET {{host}}/user/1
 HTTP 200
 [Asserts]
-#jsonpath "$.id" == 1
 jsonpath "$.nombre_usuario" exists
 jsonpath "$.email" exists
 
 # === Actualizar un usuario ===
-PUT {{host}}/users/1
+PUT {{host}}/user/1
 Content-Type: application/json
 
 {
@@ -44,11 +43,11 @@ jsonpath "$.nombre_usuario" == "Johnny Doe"
 jsonpath "$.email" == "johnny.doe@example.com"
 
 # === Eliminar un usuario ===
-DELETE {{host}}/users/1
+DELETE {{host}}/user/1
 HTTP 204
 
 # === Intentar obtener un usuario eliminado ===
-GET {{host}}/users/1
+GET {{host}}/user/1
 HTTP 404
 
 # === Crear un usuario para ventas ===
@@ -104,7 +103,7 @@ jsonpath "$[*].categoria" exists
 
 
 # === Obtener un Producto por ID (Ejemplo con ID 1) ===
-GET {{host}}/products/1
+GET {{host}}/product/1
 HTTP 200
 [Asserts]
 jsonpath "$.nombre_producto" exists
@@ -116,7 +115,7 @@ jsonpath "$.categoria" exists
 
 # === Actualizar un Producto (Ejemplo con ID 1) ===
 # Nota: Usa UpdateProductoParams
-PUT {{host}}/products/1
+PUT {{host}}/product/1
 Content-Type: application/json
 
 {
@@ -137,12 +136,12 @@ jsonpath "$.categoria" == "Tecnología"
 
 
 # === Eliminar un Producto (Ejemplo con ID 1) ===
-DELETE {{host}}/products/1
+DELETE {{host}}/product/1
 HTTP 204
 
 
 # === Intentar obtener un Producto eliminado ===
-GET {{host}}/products/1
+GET {{host}}/product/1
 HTTP 404
 
 # === Crear un Producto para venta ===
@@ -203,7 +202,7 @@ jsonpath "$[*].total" exists
 
 
 # === Obtener una Venta por ID (Ejemplo con ID 1) ===
-GET {{host}}/sales/1
+GET {{host}}/sale/1
 HTTP 200
 [Asserts]
 jsonpath "$.id_producto" == 2
@@ -215,7 +214,7 @@ jsonpath "$.total" exists
 
 # === Actualizar una Venta (Ejemplo con ID 1) ===
 # Nota: UpdateVentaParams solo actualiza cantidad, total, y fecha.
-PUT {{host}}/sales/1
+PUT {{host}}/sale/1
 Content-Type: application/json
 
 {
@@ -232,18 +231,18 @@ jsonpath "$.total" == "500.00"
 
 
 # === Eliminar una Venta (Ejemplo con ID 1) ===
-DELETE {{host}}/sales/1
+DELETE {{host}}/sale/1
 HTTP 204
 
 
 # === Intentar obtener una Venta eliminada ===
-GET {{host}}/sales/1
+GET {{host}}/sale/1
 HTTP 404
 
 # === Eliminar un Producto ===
-DELETE {{host}}/products/2
+DELETE {{host}}/product/2
 HTTP 204
 
 # === Eliminar un Usuario ===
-DELETE {{host}}/users/2
+DELETE {{host}}/user/2
 HTTP 204

@@ -17,7 +17,7 @@ func UsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 		case http.MethodGet:
 			listUsersHandler(queries)(w, r) // GET /users
 		case http.MethodPost:
-			createUserHandler(queries)(w, r) // POST /users
+			createUserHandler(queries)(w, r) // POST /user
 		default:
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
@@ -82,7 +82,7 @@ func UserHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func getUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/users/"):]
+		idStr := r.URL.Path[len("/user/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID inválido", http.StatusBadRequest)
@@ -106,7 +106,7 @@ func getUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func updateUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/users/"):]
+		idStr := r.URL.Path[len("/user/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID inválido", http.StatusBadRequest)
@@ -142,7 +142,7 @@ func updateUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func deleteUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/users/"):]
+		idStr := r.URL.Path[len("/user/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID inválido", http.StatusBadRequest)

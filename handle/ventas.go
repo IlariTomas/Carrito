@@ -82,7 +82,7 @@ func SaleHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Venta: GET /sales/{id}
 func getVentaHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/sales/"):]
+		idStr := r.URL.Path[len("/sale/"):]
 		idVenta, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de venta inválido", http.StatusBadRequest)
@@ -107,7 +107,7 @@ func getVentaHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Venta: PUT /sales/{id}
 func updateVentaHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/sales/"):]
+		idStr := r.URL.Path[len("/sale/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de venta inválido", http.StatusBadRequest)
@@ -139,7 +139,7 @@ func updateVentaHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Venta: DELETE /sales/{id}
 func deleteVentaHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/sales/"):]
+		idStr := r.URL.Path[len("/sale/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de venta inválido", http.StatusBadRequest)

@@ -82,7 +82,7 @@ func ProductHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Producto: GET /products/{id}
 func getProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/products/"):]
+		idStr := r.URL.Path[len("/product/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de producto inválido", http.StatusBadRequest)
@@ -107,7 +107,7 @@ func getProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Producto: PUT /products/{id} (Usando UpdateProducto)
 func updateProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/products/"):]
+		idStr := r.URL.Path[len("/product/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de producto inválido", http.StatusBadRequest)
@@ -139,7 +139,7 @@ func updateProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Producto: DELETE /products/{id}
 func deleteProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/products/"):]
+		idStr := r.URL.Path[len("/product/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de producto inválido", http.StatusBadRequest)
