@@ -8,40 +8,75 @@
   <link rel="stylesheet" href="static/style.css?v=1.1">
 </head>
 <body>
-  <header>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">Icono</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Productos</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Mis Compras</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" aria-disabled="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                </svg>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <header class="header">
+    <nav>
+      <ul class="main-nav">
+        <li class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+            <path fill="none" stroke="black" stroke-width="2" d="M4 12h4l3-6 3 12 3-6h3"/>
+          </svg>
+        </li>
+        <li>
+          <a aria-current="page" href="#">Productos</a>
+        </li>
+        <li>
+          <a href="#">Mis Compras</a>
+        </li>
+
+        <!-- esto va en un temp -->
+        <li class="category">
+          <a href="#">Categorías</a>
+          <ul class="submenu-categorias">
+            <li><a href="#">Electrónica</a></li>
+            <li><a href="#">Ropa</a></li>
+            <li><a href="#">Hogar</a></li>
+            <li><a href="#">Libros</a></li>
+          </ul>
+        </li>
+
+        <li class="push">
+          <a href="">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+              class="bi bi-cart" viewBox="0 0 16 16">
+              <path
+                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
   </header>
+  <div class="filter">
+    
+  </div>
+
   <main class="main">
+    <div class="sort-container">
+      <select name="order" id="order-select">
+        <option value="price-asc">▲ Precio</option>
+        <option value="price-desc">▼ Precio</option>
+        <option value="date-new">Más Reciente</option>
+        <option value="date-old" class="ultimo-select">Más Antiguo</option>
+      </select>
+    </div>
+    <div id="product-list" class="product-list">
+
+    </div>
   </main>
-  <footer>
-      <p>Proyecto Especias Programacion Web 2025</p>
-      <p>Tomas Ilari</p>
-      <p>Juan Abraham</p>
-      <p>Martino Masson</p>
+
+  <footer class="footer">
+    <ul class="footer-list">
+      <div class="footer-left">
+        <li>&copy; 2025 Carrito de Compras</li>
+        <li>Proyecto Especias Programacion Web 2025</li>
+      </div>
+      <div class="footer-right">
+        <li>Tomas Ilari</li>
+        <li>Juan Abraham</li>
+        <li>Martino Masson</li>
+      </div>
+    </ul>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
