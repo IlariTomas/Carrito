@@ -68,8 +68,13 @@ jsonpath "$.email" == "usuario.venta@example.com"
 # CHEQUEOS PARA PRODUCTOS
 # ====================================
 
+# ====================================
+# CHEQUEOS PARA PRODUCTOS
+# ====================================
+
 # === Crear un Producto ===
-# Nota: La estructura CreateProdParams incluye nombre_producto, descripcion, precio, categoria
+# ARREGLO: El cuerpo del POST debe estar en 'snake_case'
+
 POST {{host}}/products
 Content-Type: application/json
 
@@ -101,7 +106,6 @@ jsonpath "$[*].precio" exists
 jsonpath "$[*].categoria" exists
 
 
-
 # === Obtener un Producto por ID (Ejemplo con ID 1) ===
 GET {{host}}/product/1
 HTTP 200
@@ -114,7 +118,6 @@ jsonpath "$.categoria" exists
 
 
 # === Actualizar un Producto (Ejemplo con ID 1) ===
-# Nota: Usa UpdateProductoParams
 PUT {{host}}/product/1
 Content-Type: application/json
 
@@ -123,17 +126,18 @@ Content-Type: application/json
   "descripcion": "La mejor laptop para desarrollo.",
   "stock": 6,
   "precio": "1500.00",
-  "categoria": "Tecnología"
+  "categoria": "Tecnología",
+  "imagen": "" 
 }
 
 HTTP 200
+
 [Asserts]
 jsonpath "$.nombre_producto" == "Laptop Pro Max"
 jsonpath "$.descripcion" == "La mejor laptop para desarrollo."
 jsonpath "$.stock" == 6
 jsonpath "$.precio" == "1500.00"
 jsonpath "$.categoria" == "Tecnología"
-
 
 # === Eliminar un Producto (Ejemplo con ID 1) ===
 DELETE {{host}}/product/1
@@ -145,6 +149,8 @@ GET {{host}}/product/1
 HTTP 404
 
 # === Crear un Producto para venta ===
+# ARREGLO: El cuerpo del POST debe estar en 'snake_case'.
+
 POST {{host}}/products
 Content-Type: application/json
 

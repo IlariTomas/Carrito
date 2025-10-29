@@ -1,0 +1,45 @@
+package views
+
+import sqlc "carrito.com/db/sqlc"
+
+templ ProductList(productos []sqlc.Producto) {
+
+    // Iteramos sobre la lista de productos que recibe
+    for _, p := range productos {
+
+        // 1. Contenedor principal
+        <div class="product">
+
+            // 2. Contenedor de la imagen
+            <div class="product-image">
+                
+                // Solo comprobamos si el string no está vacío.
+                if p.Imagen != "" {
+                    <img src={ p.Imagen } alt={ p.NombreProducto }/>
+                } else {
+                    // Mantenemos tu imagen placeholder
+                    <img src="https://images.wondershare.com/repairit/article/error-image-error-loading-1.jpeg" alt={ p.NombreProducto }/>
+                }
+
+            </div>
+
+            // 4. Nombre
+            <h3 class="product-name">{ p.NombreProducto }</h3>
+
+            // 5. Precio
+            <p class="product-price">${ p.Precio }</p>
+
+            // 6. Descripción
+            <p class="product-description">
+                if p.Descripcion != "" {
+                    { p.Descripcion }
+                } else {
+                    "Descripción no disponible."
+                }
+            </p>
+
+            // 7. Botón
+            <button class="add-to-cart-btn">Agregar al carrito</button>
+        </div>
+    }
+}

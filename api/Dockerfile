@@ -14,6 +14,7 @@
     COPY static ./static
     COPY db ./db
     COPY handle ./handle
+    COPY views ./views
 
     # Compila el binario
     RUN go build -o carrito .

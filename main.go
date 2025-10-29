@@ -9,6 +9,8 @@ import (
 	sqlc "carrito.com/db/sqlc" // generado por sqlc
 	"carrito.com/handle"
 	_ "github.com/lib/pq"
+
+	"github.com/rs/cors" 
 )
 
 func main() {
@@ -57,6 +59,7 @@ func main() {
 	queries := sqlc.New(db)
 	//Rutas
 	mux.HandleFunc("/users", handle.UsersHandler(queries))
+	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
 	mux.HandleFunc("/user/", handle.UserHandler(queries))
 
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
@@ -65,15 +68,25 @@ func main() {
 	mux.HandleFunc("/sales", handle.SalesHandler(queries))
 	mux.HandleFunc("/sale/", handle.SaleHandler(queries))
 
-	// ... (El código http.ListenAndServe)
 
+	// 1. Crear una instancia de CORS que permite cualquier origen (*).
+    c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"}, 
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
+
+    // 2. Envolver el router (mux) con el handler de CORS.
+	handler := c.Handler(mux)
+	
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
-	err := http.ListenAndServe(port, mux)
+	
+    // 3. Pasar el handler envuelto (handler) al ListenAndServe
+	err := http.ListenAndServe(port, handler)
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 	}
-
 }
 
 // Función para manejar errores 404

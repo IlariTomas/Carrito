@@ -7,10 +7,11 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createProd = `-- name: CreateProd :one
-INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria) VALUES ($1,$2, $3, $4, $5) RETURNING nombre_producto, descripcion, precio, stock, categoria
+INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING nombre_producto, descripcion, precio, stock, categoria, imagen
 `
 
 type CreateProdParams struct {
@@ -19,6 +20,7 @@ type CreateProdParams struct {
 	Precio         string `json:"precio"`
 	Stock          int32  `json:"stock"`
 	Categoria      string `json:"categoria"`
+	Imagen         string `json:"imagen"`
 }
 
 type CreateProdRow struct {
@@ -27,6 +29,7 @@ type CreateProdRow struct {
 	Precio         string `json:"precio"`
 	Stock          int32  `json:"stock"`
 	Categoria      string `json:"categoria"`
+	Imagen         string `json:"imagen"`
 }
 
 func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateProdRow, error) {
@@ -36,6 +39,7 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateP
 		arg.Precio,
 		arg.Stock,
 		arg.Categoria,
+		arg.Imagen,
 	)
 	var i CreateProdRow
 	err := row.Scan(
@@ -44,6 +48,7 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateP
 		&i.Precio,
 		&i.Stock,
 		&i.Categoria,
+		&i.Imagen,
 	)
 	return i, err
 }
@@ -65,26 +70,18 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Usuario
 }
 
 const createVenta = `-- name: CreateVenta :one
-INSERT INTO venta (id_producto,id_usuario, cantidad, total, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING id_producto, id_usuario, cantidad, total, fecha
+INSERT INTO venta (id_producto,id_usuario, cantidad, total, fecha) VALUES ($1, $2, $3, $4, $5) RETURNING id_venta, id_producto, id_usuario, cantidad, total, fecha
 `
 
 type CreateVentaParams struct {
-	IDProducto int32  `json:"id_producto"`
-	IDUsuario  int32  `json:"id_usuario"`
-	Cantidad   int32  `json:"cantidad"`
-	Total      string `json:"total"`
-	Fecha      string `json:"fecha"`
+	IDProducto int32        `json:"id_producto"`
+	IDUsuario  int32        `json:"id_usuario"`
+	Cantidad   int32        `json:"cantidad"`
+	Total      string       `json:"total"`
+	Fecha      sql.NullTime `json:"fecha"`
 }
 
-type CreateVentaRow struct {
-	IDProducto int32  `json:"id_producto"`
-	IDUsuario  int32  `json:"id_usuario"`
-	Cantidad   int32  `json:"cantidad"`
-	Total      string `json:"total"`
-	Fecha      string `json:"fecha"`
-}
-
-func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (CreateVentaRow, error) {
+func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Ventum, error) {
 	row := q.db.QueryRowContext(ctx, createVenta,
 		arg.IDProducto,
 		arg.IDUsuario,
@@ -92,8 +89,9 @@ func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Creat
 		arg.Total,
 		arg.Fecha,
 	)
-	var i CreateVentaRow
+	var i Ventum
 	err := row.Scan(
+		&i.IDVenta,
 		&i.IDProducto,
 		&i.IDUsuario,
 		&i.Cantidad,
@@ -131,26 +129,20 @@ func (q *Queries) DeleteVenta(ctx context.Context, idVenta int32) error {
 }
 
 const getProd = `-- name: GetProd :one
-SELECT nombre_producto, descripcion, stock, precio, categoria FROM producto WHERE id_producto = $1
+SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen FROM producto WHERE id_producto = $1
 `
 
-type GetProdRow struct {
-	NombreProducto string `json:"nombre_producto"`
-	Descripcion    string `json:"descripcion"`
-	Stock          int32  `json:"stock"`
-	Precio         string `json:"precio"`
-	Categoria      string `json:"categoria"`
-}
-
-func (q *Queries) GetProd(ctx context.Context, idProducto int32) (GetProdRow, error) {
+func (q *Queries) GetProd(ctx context.Context, idProducto int32) (Producto, error) {
 	row := q.db.QueryRowContext(ctx, getProd, idProducto)
-	var i GetProdRow
+	var i Producto
 	err := row.Scan(
+		&i.IDProducto,
 		&i.NombreProducto,
 		&i.Descripcion,
-		&i.Stock,
 		&i.Precio,
+		&i.Stock,
 		&i.Categoria,
+		&i.Imagen,
 	)
 	return i, err
 }
@@ -208,7 +200,7 @@ func (q *Queries) GetVenta_usuario(ctx context.Context, idUsuario int32) (Ventum
 }
 
 const listProd = `-- name: ListProd :many
-SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria FROM producto ORDER BY nombre_producto
+SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen FROM producto ORDER BY nombre_producto
 `
 
 func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
@@ -227,6 +219,77 @@ func (q *Queries) ListProd(ctx context.Context) ([]Producto, error) {
 			&i.Precio,
 			&i.Stock,
 			&i.Categoria,
+			&i.Imagen,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listProductsByPriceAsc = `-- name: ListProductsByPriceAsc :many
+SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen FROM producto ORDER BY precio ASC
+`
+
+func (q *Queries) ListProductsByPriceAsc(ctx context.Context) ([]Producto, error) {
+	rows, err := q.db.QueryContext(ctx, listProductsByPriceAsc)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Producto
+	for rows.Next() {
+		var i Producto
+		if err := rows.Scan(
+			&i.IDProducto,
+			&i.NombreProducto,
+			&i.Descripcion,
+			&i.Precio,
+			&i.Stock,
+			&i.Categoria,
+			&i.Imagen,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listProductsByPriceDesc = `-- name: ListProductsByPriceDesc :many
+SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen FROM producto ORDER BY precio DESC
+`
+
+func (q *Queries) ListProductsByPriceDesc(ctx context.Context) ([]Producto, error) {
+	rows, err := q.db.QueryContext(ctx, listProductsByPriceDesc)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Producto
+	for rows.Next() {
+		var i Producto
+		if err := rows.Scan(
+			&i.IDProducto,
+			&i.NombreProducto,
+			&i.Descripcion,
+			&i.Precio,
+			&i.Stock,
+			&i.Categoria,
+			&i.Imagen,
 		); err != nil {
 			return nil, err
 		}
@@ -337,7 +400,7 @@ func (q *Queries) ListVentasUsuario(ctx context.Context, idUsuario int32) ([]Ven
 }
 
 const updateProducto = `-- name: UpdateProducto :exec
-UPDATE producto SET nombre_producto = $2, descripcion = $3, stock = $4, precio = $5, categoria = $6 WHERE id_producto = $1
+UPDATE producto SET nombre_producto = $2, descripcion = $3, stock = $4, precio = $5, categoria = $6, imagen = $7 WHERE id_producto = $1
 `
 
 type UpdateProductoParams struct {
@@ -347,6 +410,7 @@ type UpdateProductoParams struct {
 	Stock          int32  `json:"stock"`
 	Precio         string `json:"precio"`
 	Categoria      string `json:"categoria"`
+	Imagen         string `json:"imagen"`
 }
 
 func (q *Queries) UpdateProducto(ctx context.Context, arg UpdateProductoParams) error {
@@ -357,6 +421,7 @@ func (q *Queries) UpdateProducto(ctx context.Context, arg UpdateProductoParams) 
 		arg.Stock,
 		arg.Precio,
 		arg.Categoria,
+		arg.Imagen,
 	)
 	return err
 }
@@ -409,10 +474,10 @@ UPDATE venta SET cantidad = $2, total = $3, fecha = $4 WHERE id_venta = $1
 `
 
 type UpdateVentaParams struct {
-	IDVenta  int32  `json:"id_venta"`
-	Cantidad int32  `json:"cantidad"`
-	Total    string `json:"total"`
-	Fecha    string `json:"fecha"`
+	IDVenta  int32        `json:"id_venta"`
+	Cantidad int32        `json:"cantidad"`
+	Total    string       `json:"total"`
+	Fecha    sql.NullTime `json:"fecha"`
 }
 
 func (q *Queries) UpdateVenta(ctx context.Context, arg UpdateVentaParams) error {

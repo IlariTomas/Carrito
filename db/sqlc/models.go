@@ -9,12 +9,13 @@ import (
 )
 
 type Producto struct {
-	IDProducto     int32          `json:"id_producto"`
-	NombreProducto string         `json:"nombre_producto"`
-	Descripcion    sql.NullString `json:"descripcion"`
-	Precio         string         `json:"precio"`
-	Stock          int32          `json:"stock"`
-	Categoria      sql.NullString `json:"categoria"`
+	IDProducto     int32  `json:"id_producto"`
+	NombreProducto string `json:"nombre_producto"`
+	Descripcion    string `json:"descripcion"`
+	Precio         string `json:"precio"`
+	Stock          int32  `json:"stock"`
+	Categoria      string `json:"categoria"`
+	Imagen         string `json:"imagen"`
 }
 
 type Usuario struct {
