@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carrito de Compras</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    const API_HOST = 'http://localhost:8080';
+  </script>
+</head>
+<body>
+  <header class="header">
+    <nav>
+      <ul class="main-nav">
+        <li class="logo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+            <path fill="none" stroke="black" stroke-width="2" d="M4 12h4l3-6 3 12 3-6h3"/>
+          </svg>
+          <span class="title-logo">Carrito web App</span>
+        </li>
+        <li class="push">
+          <a href="../Prueba/productos.html">Agregar Productos</a>
+        </li>
+        <li>
+          <a href="../Prueba/usuarios.html">Agregar Usuarios</a>
+        </li>
+        <li>
+          <a href="../Prueba/ventas.html">Generar venta</a>
+        </li>
+      </ul>
+    </nav>
+
+  </header>
+  <main class="main">
+    <section class="insert-section">
+      <h1>Agregar Venta</h1>
+      <form class="form" id="create-sale-form">
+        <div class="form-group">
+          <div class="option-texts">
+            <label for="productSelect">Producto</label>
+            <select id="select-product">
+              <option value="">Seleccione un Producto</option>
+            </select>
+          </div>
+          <div class="option-number">
+            <label for="productStock">Cantidad</label>
+            <input type="number" id="productStock" min="1" placeholder="100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="option-texts">
+            <label for="buyerSelect">Comprador</label>
+            <select id="buyer-Select">
+              <option value="">Seleccione un Comprador</option>
+            </select>
+          </div>
+          <div class="option-number">
+            <label for="productStock">Dia de la Compras</label>
+            <input type="date" id="purchaseDate">
+          </div>
+        </div>
+
+        <div class="option-texts">
+          <strong class="totalPrice">Total de $<span id="totalAmount">0</span></strong>
+        </div>
+
+        <button type="submit" class="btn">Agregar Producto</button>
+      </form>
+      <div id="sale-message" class="message"></div>
+    </section>
+    <section class="list-section" class="list">
+      <h2>Listado de Ventas</h2>
+      <div id="sales-list" class="list">
+        <!-- Aquí se agrega el listado de ventas -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <ul class="footer-list">
+      <div class="footer-left">
+        <li>&copy; 2025 Carrito de Compras</li>
+        <li>Proyecto Especias Programacion Web 2025</li>
+      </div>
+      <div class="footer-right">
+        <li>Tomas Ilari</li>
+        <li>Juan Abraham</li>
+        <li>Martino Masson</li>
+      </div>
+    </ul>
+  </footer>
+  <script src="js/sale.js"></script>
+</body>
+</html>
+

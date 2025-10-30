@@ -10,7 +10,6 @@ import (
 
 	sqlc "carrito.com/db/sqlc"
 	"carrito.com/views"
-	
 )
 
 // -----------------------------------------------------
@@ -30,8 +29,8 @@ func ProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 	}
 }
 
-// 1. DTO (struct simple) para la PETICIÓN (Request)
-//    (Lo mantenemos para manejar 'snake_case' y 'precio' como string)
+//  1. DTO (struct simple) para la PETICIÓN (Request)
+//     (Lo mantenemos para manejar 'snake_case' y 'precio' como string)
 type createProductRequest struct {
 	NombreProducto string `json:"nombre_producto"`
 	Descripcion    string `json:"descripcion"`
@@ -57,9 +56,9 @@ func createProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 			NombreProducto: req.NombreProducto,
 			Stock:          req.Stock,
 			Precio:         req.Precio,
-			Descripcion:    req.Descripcion, // 👈 Ahora es string
-			Categoria:      req.Categoria,   // 👈 Ahora es string
-			Imagen:         req.Imagen,      // 👈 Ahora es string
+			Descripcion:    req.Descripcion,
+			Categoria:      req.Categoria,
+			Imagen:         req.Imagen,
 		}
 
 		// Llama a la DB
@@ -147,8 +146,8 @@ func updateProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 			Descripcion:    req.Descripcion, // 👈 Ahora es string
 			Stock:          req.Stock,
 			Precio:         req.Precio,
-			Categoria:      req.Categoria,   // 👈 Ahora es string
-			Imagen:         req.Imagen,      // 👈 Ahora es string
+			Categoria:      req.Categoria, // 👈 Ahora es string
+			Imagen:         req.Imagen,    // 👈 Ahora es string
 		}
 
 		// Llama a la DB
@@ -218,7 +217,8 @@ func deleteProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 // -----------------------------------------------------
 
 // (Este handler estaba bien porque solo leía de 'sqlc.Producto',
-//  que ya está simple gracias a 'sqlc generate')
+//
+//	que ya está simple gracias a 'sqlc generate')
 func ListProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sortBy := r.URL.Query().Get("sort")
