@@ -68,13 +68,7 @@ jsonpath "$.email" == "usuario.venta@example.com"
 # CHEQUEOS PARA PRODUCTOS
 # ====================================
 
-# ====================================
-# CHEQUEOS PARA PRODUCTOS
-# ====================================
-
 # === Crear un Producto ===
-# ARREGLO: El cuerpo del POST debe estar en 'snake_case'
-
 POST {{host}}/products
 Content-Type: application/json
 
@@ -83,7 +77,8 @@ Content-Type: application/json
   "descripcion": "La laptop más potente del mercado.",
   "stock": 10,
   "precio": "1200.00",
-  "categoria": "Electrónica"
+  "categoria": "Electrónica",
+  "imagen": "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
 }
 
 HTTP 201
@@ -93,7 +88,7 @@ jsonpath "$.descripcion" == "La laptop más potente del mercado."
 jsonpath "$.stock" == 10
 jsonpath "$.precio" == "1200.00"
 jsonpath "$.categoria" == "Electrónica"
-
+jsonpath "$.imagen" == "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
 
 # === Listar todos los Productos ===
 GET {{host}}/products
@@ -104,6 +99,7 @@ jsonpath "$[*].descripcion" exists
 jsonpath "$[*].stock" exists
 jsonpath "$[*].precio" exists
 jsonpath "$[*].categoria" exists
+jsonpath "$[*].imagen" exists
 
 
 # === Obtener un Producto por ID (Ejemplo con ID 1) ===
@@ -115,9 +111,11 @@ jsonpath "$.descripcion" exists
 jsonpath "$.stock" exists
 jsonpath "$.precio" exists
 jsonpath "$.categoria" exists
+jsonpath "$[*].imagen" exists
 
 
 # === Actualizar un Producto (Ejemplo con ID 1) ===
+# Nota: Usa UpdateProductoParams
 PUT {{host}}/product/1
 Content-Type: application/json
 
@@ -127,17 +125,19 @@ Content-Type: application/json
   "stock": 6,
   "precio": "1500.00",
   "categoria": "Tecnología",
-  "imagen": "" 
-}
+  "imagen": "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
+}       
+
 
 HTTP 200
-
 [Asserts]
 jsonpath "$.nombre_producto" == "Laptop Pro Max"
 jsonpath "$.descripcion" == "La mejor laptop para desarrollo."
 jsonpath "$.stock" == 6
 jsonpath "$.precio" == "1500.00"
 jsonpath "$.categoria" == "Tecnología"
+jsonpath "$.imagen" == "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
+
 
 # === Eliminar un Producto (Ejemplo con ID 1) ===
 DELETE {{host}}/product/1
@@ -149,8 +149,6 @@ GET {{host}}/product/1
 HTTP 404
 
 # === Crear un Producto para venta ===
-# ARREGLO: El cuerpo del POST debe estar en 'snake_case'.
-
 POST {{host}}/products
 Content-Type: application/json
 
@@ -159,8 +157,9 @@ Content-Type: application/json
   "descripcion": "Un mouse inalámbrico ergonómico.",
   "stock": 25,
   "precio": "50.00",
-  "categoria": "Accesorios"
-}
+  "categoria": "Accesorios",
+  "imagen": "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
+} 
 
 HTTP 201
 [Asserts]
@@ -169,6 +168,7 @@ jsonpath "$.descripcion" == "Un mouse inalámbrico ergonómico."
 jsonpath "$.stock" == 25
 jsonpath "$.precio" == "50.00"
 jsonpath "$.categoria" == "Accesorios"
+jsonpath "$.imagen" == "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
 
 # ====================================
 # CHEQUEOS PARA VENTAS

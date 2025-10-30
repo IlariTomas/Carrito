@@ -78,7 +78,7 @@ El sistema desarrollado corresponde a un **Carrito de Compras**, cuyo dominio in
 
 Instalar docker-compose
 
-Ejecutar el siguiente comando para levantar los contenedores
+Ejecutar el siguiente comando para levantar los contenedores y correr los test Hurl
 docker-compose up --build
 
 

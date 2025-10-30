@@ -1,10 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 # La URL de tu API
 API_URL="http://localhost:8080/products"
-
-echo "Cargando productos a $API_URL ..."
-echo "---------------------------------"
 
 # Producto 1: Pc de escritorio
 curl -X POST -H "Content-Type: application/json" \
@@ -17,8 +14,6 @@ curl -X POST -H "Content-Type: application/json" \
     "imagen": "https://www.crucial.mx/content/dam/crucial/articles/for-pc-builders/new025-how-to-upgrade-your-pc/modern-gaming-pc.jpg.transform/medium-jpg/img.jpg"
 }' "$API_URL"
 
-echo "\n---------------------------------"
-
 # Producto 2: Laptop Gamer
 curl -X POST -H "Content-Type: application/json" \
 -d '{
@@ -29,8 +24,6 @@ curl -X POST -H "Content-Type: application/json" \
     "categoria": "Computadoras",
     "imagen": "https://m.media-amazon.com/images/I/811QpiYXe-L.jpg"
 }' "$API_URL"
-
-echo "\n---------------------------------"
 
 # Producto 3: Teclado Mecánico
 curl -X POST -H "Content-Type: application/json" \
@@ -66,6 +59,4 @@ curl -X POST -H "Content-Type: application/json" \
     "imagen": "https://http2.mlstatic.com/D_NQ_NP_2X_849696-MLA95939215137_102025-F.webp.jpg"
 }' "$API_URL"
 
-
-echo "\n---------------------------------"
 echo "¡Productos cargados!"

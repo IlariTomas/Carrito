@@ -3,7 +3,7 @@ FROM curlimages/curl:latest
 # Cambiamos al usuario root para poder instalar paquetes
 USER root
 
-# 🔹 ARREGLO: Instala Hurl usando el gestor de paquetes de Alpine.
+# Instala Hurl usando el gestor de paquetes de Alpine.
 # Esto es mucho más confiable que descargar el binario con curl.
 RUN apk add --no-cache hurl --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing
 

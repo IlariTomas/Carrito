@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createProd = `-- name: CreateProd :one
@@ -78,7 +77,7 @@ type CreateVentaParams struct {
 	IDUsuario  int32        `json:"id_usuario"`
 	Cantidad   int32        `json:"cantidad"`
 	Total      string       `json:"total"`
-	Fecha      sql.NullTime `json:"fecha"`
+	Fecha      string       `json:"fecha"`
 }
 
 func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Ventum, error) {
@@ -477,7 +476,7 @@ type UpdateVentaParams struct {
 	IDVenta  int32        `json:"id_venta"`
 	Cantidad int32        `json:"cantidad"`
 	Total    string       `json:"total"`
-	Fecha    sql.NullTime `json:"fecha"`
+	Fecha    string       `json:"fecha"`
 }
 
 func (q *Queries) UpdateVenta(ctx context.Context, arg UpdateVentaParams) error {
