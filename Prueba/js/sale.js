@@ -1,5 +1,6 @@
 // La constante API_HOST se define en el HTML
-const SALE_URL = `${API_HOST}/sales`;
+const SALES_URL = `${API_HOST}/sales`;
+const SALE_URL = `${API_HOST}/sale`;
 const PRODUCT_URL = `${API_HOST}/products`;
 const USER_URL = `${API_HOST}/users`;
 
@@ -19,8 +20,6 @@ async function handleCreation(e, url, data, msgElement) {
     if (data.id_producto !== undefined) data.id_producto = parseInt(data.id_producto);
     if (data.id_usuario !== undefined) data.id_usuario = parseInt(data.id_usuario);
     if (data.fecha !== undefined) data.fecha = new Date(data.fecha);
-
-    console.log(data);
     
     try {
         const response = await fetch(url, {
@@ -51,7 +50,7 @@ saleForm.addEventListener('submit', (e) => {
         fecha: document.getElementById('purchaseDate').value,
         total: document.getElementById('totalAmount').textContent.replace('$', ''),
     };
-    handleCreation(e, SALE_URL, data, saleMessage);
+    handleCreation(e, SALES_URL, data, saleMessage);
 });
 
 async function fetchEntities(url) {
@@ -68,8 +67,24 @@ async function fetchEntities(url) {
 
 async function loadAndRenderEntities() {
     salesList.innerHTML = '<p>Cargando ventas...</p>';
-    const sales = await fetchEntities(SALE_URL);
+    const sales = await fetchEntities(SALES_URL);
     renderSales(sales);
+}
+
+async function deleteSale(saleId) {
+    try {
+        const response = await fetch(`${SALE_URL}/${saleId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            await loadAndRenderEntities();
+        } else {
+            console.error(`Error al eliminar venta con ID ${saleId}:`, await response.text());
+        }
+    } catch (error) {
+        console.error('Error de eliminación:', error);
+    }
 }
 
 function renderSales(sales) {
@@ -81,7 +96,6 @@ function renderSales(sales) {
     }
     
     list.forEach(v => {
-        console.log('Venta obtenida:', v);
         const item = document.createElement('div');
         item.className = 'entity-item';
         item.innerHTML = `
@@ -95,8 +109,13 @@ function renderSales(sales) {
                     <p>total: ${v.total}</p>
                 </div>
             </div>
-            <button class="delete-btn" data-id="${v.id_producto}">Eliminar</button>
+            <button class="delete-btn">Eliminar</button>
         `;
+        const deleteButton = item.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+            deleteSale(v.id_venta);
+        });
+
         salesList.appendChild(item);
     });
 }

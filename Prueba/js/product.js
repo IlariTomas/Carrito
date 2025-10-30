@@ -1,5 +1,6 @@
 // La constante API_HOST se define en el HTML
-const PRODUCT_URL = `${API_HOST}/products`;
+const PRODUCTS_URL = `${API_HOST}/products`;
+const PRODUCT_URL = `${API_HOST}/product`;
 
 const productsList = document.getElementById('products-list');
 const productForm = document.getElementById('create-product-form');
@@ -50,7 +51,7 @@ productForm.addEventListener('submit', (e) => {
         categoria: document.getElementById('p-categoria').value,
         imagen: document.getElementById('p-imagen').value,
     };
-    handleCreation(e, PRODUCT_URL, data, productMessage);
+    handleCreation(e, PRODUCTS_URL, data, productMessage);
 });
 
 async function fetchEntities(url) {
@@ -67,8 +68,24 @@ async function fetchEntities(url) {
 
 async function loadAndRenderEntities() {
     productsList.innerHTML = '<p>Cargando productos...</p>';
-    const products = await fetchEntities(PRODUCT_URL);
+    const products = await fetchEntities(PRODUCTS_URL);
     renderProducts(products);
+}
+
+async function deleteProduct(productId) {
+    try {
+        const response = await fetch(`${PRODUCT_URL}/${productId}`, {
+            method: 'DELETE',       
+        });
+
+        if (response.ok) {
+            await loadAndRenderEntities();
+        } else {
+            console.error(`Error al eliminar producto ID ${productId}:`, await response.text());
+        }
+    } catch (error) {
+        console.error('Error de eliminación:', error);
+    }
 }
 
 function renderProducts(products) {
@@ -93,8 +110,14 @@ function renderProducts(products) {
                     <p>Stock: ${p.stock}</p>
                 </div>
             </div>
-            <button class="delete-btn" data-id="${p.id_producto}">Eliminar</button>
+            <button class="delete-btn">Eliminar</button>
         `;
+
+        const deleteButton = item.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+            deleteProduct(p.id_producto);
+        });
+
         productsList.appendChild(item);
     });
 }

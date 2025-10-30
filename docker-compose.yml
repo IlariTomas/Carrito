@@ -51,6 +51,9 @@ services:
         
         echo 'Ejecutando pruebas con Hurl...';
         hurl --test --color --variable host=http://api:8080 requests.hurl
+
+        . ./cargar_productos.sh
+
       "
     networks:
       - carrito-net

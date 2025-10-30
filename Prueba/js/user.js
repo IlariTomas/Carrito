@@ -1,5 +1,6 @@
 // La constante API_HOST se define en el HTML
-const USER_URL = `${API_HOST}/users`;
+const USERS_URL = `${API_HOST}/users`;
+const USER_URL = `${API_HOST}/user`;
 
 const usersList = document.getElementById('users-list');
 const userForm = document.getElementById('user-insert-section');
@@ -40,7 +41,7 @@ userForm.addEventListener('submit', (e) => {
         nombre_usuario: document.getElementById('userName').value,
         email: document.getElementById('userEmail').value,
     };
-    handleCreation(e, USER_URL, data, userMessage);
+    handleCreation(e, USERS_URL, data, userMessage);
 });
 
 async function fetchEntities(url) {
@@ -57,8 +58,24 @@ async function fetchEntities(url) {
 
 async function loadAndRenderEntities() {
     usersList.innerHTML = '<p>Cargando usuarios...</p>';
-    const users = await fetchEntities(USER_URL);
+    const users = await fetchEntities(USERS_URL);
     renderUsers(users);
+}
+
+async function deleteUser(userId) {
+    try {
+        const response = await fetch(`${USER_URL}/${userId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            await loadAndRenderEntities();
+        } else {
+            console.error(`Error al eliminar usuario ID ${userId}:`, await response.text());
+        }
+    } catch (error) {
+        console.error('Error de eliminación:', error);
+    }
 }
 
 function renderUsers(users) {
@@ -82,8 +99,14 @@ function renderUsers(users) {
                     <p>Email: ${u.email}</p>
                 </div>
             </div>
-            <button class="delete-btn" data-id="${u.id_usuario}">Eliminar</button>
+            <button class="delete-btn">Eliminar</button>
         `;
+
+        const deleteButton = item.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', () => {
+            deleteUser(u.id_usuario);
+        });
+
         usersList.appendChild(item);
     });
 }
