@@ -1,5 +1,5 @@
 -- name: CreateProd :one
-INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING nombre_producto, descripcion, precio, stock, categoria, imagen;
+INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING *;
 
 -- name: CreateUser :one
 INSERT INTO usuario (nombre_usuario, email) VALUES ($1, $2) RETURNING id_usuario, nombre_usuario, email;

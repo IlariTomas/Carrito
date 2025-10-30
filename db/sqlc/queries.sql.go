@@ -10,7 +10,7 @@ import (
 )
 
 const createProd = `-- name: CreateProd :one
-INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING nombre_producto, descripcion, precio, stock, categoria, imagen
+INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen
 `
 
 type CreateProdParams struct {
@@ -22,16 +22,7 @@ type CreateProdParams struct {
 	Imagen         string `json:"imagen"`
 }
 
-type CreateProdRow struct {
-	NombreProducto string `json:"nombre_producto"`
-	Descripcion    string `json:"descripcion"`
-	Precio         string `json:"precio"`
-	Stock          int32  `json:"stock"`
-	Categoria      string `json:"categoria"`
-	Imagen         string `json:"imagen"`
-}
-
-func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateProdRow, error) {
+func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (Producto, error) {
 	row := q.db.QueryRowContext(ctx, createProd,
 		arg.NombreProducto,
 		arg.Descripcion,
@@ -40,8 +31,9 @@ func (q *Queries) CreateProd(ctx context.Context, arg CreateProdParams) (CreateP
 		arg.Categoria,
 		arg.Imagen,
 	)
-	var i CreateProdRow
+	var i Producto
 	err := row.Scan(
+		&i.IDProducto,
 		&i.NombreProducto,
 		&i.Descripcion,
 		&i.Precio,
@@ -77,7 +69,7 @@ type CreateVentaParams struct {
 	IDUsuario  int32        `json:"id_usuario"`
 	Cantidad   int32        `json:"cantidad"`
 	Total      string       `json:"total"`
-	Fecha      string       `json:"fecha"`
+	Fecha      string `json:"fecha"`
 }
 
 func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Ventum, error) {

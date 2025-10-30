@@ -74,12 +74,32 @@ El sistema desarrollado corresponde a un **Carrito de Compras**, cuyo dominio in
 
 ---
 
+## Aclaracion de implementacion: Entorno de Ejecución con Docker
+
+Para asegurar la portabilidad y consistencia del proyecto, todo el entorno está gestionado por Docker Compose, el cual levanta los siguientes servicios:
+
+api: Un contenedor con Go que compila y ejecuta la API REST.
+
+db: Un contenedor con Postgres que sirve como base de datos.
+
+tester: Un contenedor con Hurl que ejecuta las pruebas de integración contra la API.
+
+Decidimos implentarlo de esta manera ya que garantiza que todos los desarrolladores utilicen exactamente las mismas versiones y configuraciones de software, eliminando la necesidad de instalar dependencias globalmente.
+
+----
+
 ##  Requisitos
 
 Instalar docker-compose
 
 Ejecutar el siguiente comando para levantar los contenedores y correr los test Hurl
-docker-compose up --build
+docker-compose up --build   // Aclaracion: docker-compose o docker compose (sin guion) segun la version de docker Compose instalada
+
+Si se desea correr nuevamente los test Hurl, debe ejecutarse el siguiente comando
+docker-compose up tester    // Se levanta nuevamente el contenedor del tester. Aclaracion: Los productos se van a cargar nuevamente ya que el Script bash cargar_productos.sh esta en este contenedor y se ejecutara nuevamente.
+
+## Servidor tp4 
+Para ejecutar el servidor (api-rest) se debe abrir los index HTMl que se encuntra en la carpeta prueba en el Navegador.
 
 
 Tomas Ilari, Martino Masson, Juan Abraham
