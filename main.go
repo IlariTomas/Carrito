@@ -10,7 +10,7 @@ import (
 	"carrito.com/handle"
 	_ "github.com/lib/pq"
 
-	"github.com/rs/cors" 
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -31,21 +31,7 @@ func main() {
 
 	// Página /about
 	mux.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		fmt.Fprint(w, `<!DOCTYPE html><html><head>
-        <title>Acerca de</title></head><body>
-        <h1>Acerca del servidor</h1>
-        <p>Este es un servidor web básico escrito en Go.</p>
-        <ul>
-            <li>Host localhost:8080 was resolved.</li>
-            <li>IPv6: ::1</li>
-            <li>IPv4: 127.0.0.1</li>
-            <li>Connected to localhost (::1) port 8080</li>
-            <li>GET / HTTP/1.1</li>
-            <li>Host: localhost:8080</li>
-            <li>Content-Type: text/html; charset=utf-8</li>
-        </ul>
-        </body></html>`)
+		http.ServeFile(w, r, "about.html")
 	})
 
 	connStr := "postgres://postgres:postgres@db:5432/apirest?sslmode=disable"
@@ -68,21 +54,20 @@ func main() {
 	mux.HandleFunc("/sales", handle.SalesHandler(queries))
 	mux.HandleFunc("/sale/", handle.SaleHandler(queries))
 
-
 	// 1. Crear una instancia de CORS que permite cualquier origen (*).
-    c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, 
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type"},
 	})
 
-    // 2. Envolver el router (mux) con el handler de CORS.
+	// 2. Envolver el router (mux) con el handler de CORS.
 	handler := c.Handler(mux)
-	
+
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
-	
-    // 3. Pasar el handler envuelto (handler) al ListenAndServe
+
+	// 3. Pasar el handler envuelto (handler) al ListenAndServe
 	err := http.ListenAndServe(port, handler)
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
