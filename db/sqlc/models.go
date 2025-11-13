@@ -8,6 +8,14 @@ import (
 	"database/sql"
 )
 
+type Carrito struct {
+	IDCarrito     int32        `json:"id_carrito"`
+	IDUsuario     int32        `json:"id_usuario"`
+	IDProducto    int32        `json:"id_producto"`
+	Cantidad      int32        `json:"cantidad"`
+	FechaAgregado sql.NullTime `json:"fecha_agregado"`
+}
+
 type Producto struct {
 	IDProducto     int32  `json:"id_producto"`
 	NombreProducto string `json:"nombre_producto"`

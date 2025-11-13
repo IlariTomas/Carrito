@@ -60,3 +60,15 @@ SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imag
 
 -- name: ListProductsByPriceDesc :many
 SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen FROM producto ORDER BY precio DESC;
+
+-- name: AddToCart :one
+INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES ($1, $2, $3) RETURNING *;
+
+-- name: RemoveCartItems :exec
+DELETE FROM carrito WHERE id_carrito = $1;
+
+-- name: RemoveCart :exec
+DELETE FROM carrito WHERE id_usuario = $1;
+
+-- name: GetCartItems :many
+SELECT c.*, p.nombre_producto, p.precio FROM carrito c JOIN producto p ON c.id_producto = p.id_producto WHERE c.id_usuario = $1;

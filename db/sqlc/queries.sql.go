@@ -7,7 +7,31 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
+
+const addToCart = `-- name: AddToCart :one
+INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES ($1, $2, $3) RETURNING id_carrito, id_usuario, id_producto, cantidad, fecha_agregado
+`
+
+type AddToCartParams struct {
+	IDUsuario  int32 `json:"id_usuario"`
+	IDProducto int32 `json:"id_producto"`
+	Cantidad   int32 `json:"cantidad"`
+}
+
+func (q *Queries) AddToCart(ctx context.Context, arg AddToCartParams) (Carrito, error) {
+	row := q.db.QueryRowContext(ctx, addToCart, arg.IDUsuario, arg.IDProducto, arg.Cantidad)
+	var i Carrito
+	err := row.Scan(
+		&i.IDCarrito,
+		&i.IDUsuario,
+		&i.IDProducto,
+		&i.Cantidad,
+		&i.FechaAgregado,
+	)
+	return i, err
+}
 
 const createProd = `-- name: CreateProd :one
 INSERT INTO producto (nombre_producto, descripcion, precio, stock, categoria, imagen) VALUES ($1,$2, $3, $4, $5, $6) RETURNING id_producto, nombre_producto, descripcion, precio, stock, categoria, imagen
@@ -69,7 +93,7 @@ type CreateVentaParams struct {
 	IDUsuario  int32        `json:"id_usuario"`
 	Cantidad   int32        `json:"cantidad"`
 	Total      string       `json:"total"`
-	Fecha      string `json:"fecha"`
+	Fecha      sql.NullTime `json:"fecha"`
 }
 
 func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Ventum, error) {
@@ -117,6 +141,51 @@ DELETE FROM venta WHERE id_venta = $1
 func (q *Queries) DeleteVenta(ctx context.Context, idVenta int32) error {
 	_, err := q.db.ExecContext(ctx, deleteVenta, idVenta)
 	return err
+}
+
+const getCartItems = `-- name: GetCartItems :many
+SELECT c.id_carrito, c.id_usuario, c.id_producto, c.cantidad, c.fecha_agregado, p.nombre_producto, p.precio FROM carrito c JOIN producto p ON c.id_producto = p.id_producto WHERE c.id_usuario = $1
+`
+
+type GetCartItemsRow struct {
+	IDCarrito      int32        `json:"id_carrito"`
+	IDUsuario      int32        `json:"id_usuario"`
+	IDProducto     int32        `json:"id_producto"`
+	Cantidad       int32        `json:"cantidad"`
+	FechaAgregado  sql.NullTime `json:"fecha_agregado"`
+	NombreProducto string       `json:"nombre_producto"`
+	Precio         string       `json:"precio"`
+}
+
+func (q *Queries) GetCartItems(ctx context.Context, idUsuario int32) ([]GetCartItemsRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCartItems, idUsuario)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCartItemsRow
+	for rows.Next() {
+		var i GetCartItemsRow
+		if err := rows.Scan(
+			&i.IDCarrito,
+			&i.IDUsuario,
+			&i.IDProducto,
+			&i.Cantidad,
+			&i.FechaAgregado,
+			&i.NombreProducto,
+			&i.Precio,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getProd = `-- name: GetProd :one
@@ -390,6 +459,24 @@ func (q *Queries) ListVentasUsuario(ctx context.Context, idUsuario int32) ([]Ven
 	return items, nil
 }
 
+const removeCart = `-- name: RemoveCart :exec
+DELETE FROM carrito WHERE id_usuario = $1
+`
+
+func (q *Queries) RemoveCart(ctx context.Context, idUsuario int32) error {
+	_, err := q.db.ExecContext(ctx, removeCart, idUsuario)
+	return err
+}
+
+const removeCartItems = `-- name: RemoveCartItems :exec
+DELETE FROM carrito WHERE id_carrito = $1
+`
+
+func (q *Queries) RemoveCartItems(ctx context.Context, idCarrito int32) error {
+	_, err := q.db.ExecContext(ctx, removeCartItems, idCarrito)
+	return err
+}
+
 const updateProducto = `-- name: UpdateProducto :exec
 UPDATE producto SET nombre_producto = $2, descripcion = $3, stock = $4, precio = $5, categoria = $6, imagen = $7 WHERE id_producto = $1
 `
@@ -468,7 +555,7 @@ type UpdateVentaParams struct {
 	IDVenta  int32        `json:"id_venta"`
 	Cantidad int32        `json:"cantidad"`
 	Total    string       `json:"total"`
-	Fecha    string       `json:"fecha"`
+	Fecha    sql.NullTime `json:"fecha"`
 }
 
 func (q *Queries) UpdateVenta(ctx context.Context, arg UpdateVentaParams) error {
