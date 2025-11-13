@@ -207,3 +207,103 @@ footer {
     flex-direction: column;
     gap: 5px;
 }
+
+/* CARRITO DE COMPRAS */
+.listado-compras {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  width: 320px;
+  padding: 15px;
+  flex-direction: column;
+  display: none;
+  gap: 10px;
+  z-index: 999;
+}
+
+.listado-compras.active {
+  display: flex;
+}
+
+.list-items{
+  display: flex;
+  flex-direction: column;
+  max-height: 20pc;
+  overflow-y: auto;
+  padding: 10px;
+}
+/* ==== ITEMS DEL CARRITO ==== */
+.compra-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.compra-item h2 {
+  font-size: 1rem;
+  color: #333;
+}
+
+.compra-item p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ==== BOTÓN ELIMINAR ==== */
+.eliminar-compra-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff4d4d;
+  transition: transform 0.2s;
+}
+
+.eliminar-compra-button:hover {
+  transform: scale(1.1);
+}
+
+/* ==== ACCIONES DEL CARRITO ==== */
+.acciones-carrito {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.acciones-carrito button {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.acciones-carrito button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.acciones-carrito button:last-child {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.acciones-carrito button:hover {
+  opacity: 0.9;
+}
+
+.compra-item-right{
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.compra-item-right p{
+  margin: 0;
+}
