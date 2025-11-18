@@ -74,7 +74,7 @@ func CartItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
-			addCartHandler(queries)(w, r) // POST /carrito/items
+			addCartHandler(queries)(w, r) // POST /carrito/items/{id}
 		case http.MethodPut:
 			updateItemHandler(queries)(w, r) // PUT /carrito/items/{id}
 		case http.MethodDelete:

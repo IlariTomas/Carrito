@@ -25,14 +25,7 @@ templ ProductList(productos []sqlc.Producto) {
             </p>
             <button 
                 class="add-to-cart-btn"
-                hx-post="/carrito"
-                hx-target="#listado-compras"
-                hx-swap="innerHTML"
-                hx-include="closest .product"
-
-                data-id_producto={p.IDProducto}
-                data-id_usuario="1"
-                data-cantidad="1"
+                hx-post="/carrito/items/{prod}"
             >
                 Agregar al carrito
             </button>
