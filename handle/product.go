@@ -72,7 +72,7 @@ func createProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 		// Respuesta JSON
 		w.WriteHeader(http.StatusCreated)
-
+		w.Write([]byte("Producto creado correctamente"))
 	}
 }
 
@@ -83,6 +83,7 @@ func listProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	}
 }
 
+// PRODUCTOS INDIVIDAULES
 func ProductHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -208,51 +209,5 @@ func ListProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 func LayoutHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		views.Layout().Render(r.Context(), w)
-	}
-}
-
-func CarritoHandler(queries *sqlc.Queries) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodGet:
-			listCartHandler(queries)(w, r) // GET /carrito
-		case http.MethodPost:
-			createCartdHandler(queries)(w, r) // POST /carrito
-		default:
-			w.WriteHeader(http.StatusMethodNotAllowed)
-		}
-	}
-}
-
-func createCartdHandler(queries *sqlc.Queries) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req sqlc.AddToCartParams
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "JSON inválido", http.StatusBadRequest)
-			return
-		}
-
-		if req.IDUsuario == 0 || req.IDProducto == 0 {
-			http.Error(w, "ID de usuario y ID de producto son requeridos", http.StatusBadRequest)
-			return
-		}
-
-		// AddToCart ahora usa :one y devuelve AddToCartRow
-		cartItem, err := queries.AddToCart(r.Context(), req)
-		if err != nil {
-			http.Error(w, "Error al agregar al carrito: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(cartItem)
-	}
-}
-
-// Producto: GET /products
-func listCartHandler(queries *sqlc.Queries) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		views.CarritoList([]sqlc.Carrito{}).Render(r.Context(), w)
 	}
 }

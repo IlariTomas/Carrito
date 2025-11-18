@@ -2,7 +2,7 @@ package views
 
 import sqlc "carrito.com/db/sqlc"
 
-templ CarritoList(carrito []sqlc.Carrito) {
+templ CarritoList(carrito []sqlc.GetCartItemsRow) {
   /*@{
     totalCarrito := 0
   }*/
@@ -13,16 +13,14 @@ templ CarritoList(carrito []sqlc.Carrito) {
     for _, p := range carrito {
       <div class="compra-item">
         <div>
-          <h2>Nombre</h2>//{ p.NombreProducto }</h2>
+          <h2>{ p.NombreProducto }</h2>
           <p>Cantidad: { p.Cantidad }</p>
           <!-- @{
             totalCarrito += p.Precio * p.Cantidad
           }-->
         </div>
         <div class="compra-item-right">
-          <p>Total: 
-          <!--{ p.Precio * p.Cantidad }-->
-          </p>
+          <p>Total: { @{p.Precio * p.Cantidad} }</p>
           <button class="eliminar-compra-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
               <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">

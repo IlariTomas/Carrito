@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import sqlc "carrito.com/db/sqlc"
 
-func CarritoList(carrito []sqlc.Carrito) templ.Component {
+func CarritoList(carrito []sqlc.GetCartItemsRow) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

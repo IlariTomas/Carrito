@@ -36,7 +36,7 @@ func main() {
 	//Rutas
 	mux.HandleFunc("/", handle.LayoutHandler(queries))
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
-	mux.HandleFunc("/carrito", handle.CarritoHandler(queries))
+	mux.HandleFunc("/carrito", handle.CartHandler(queries))
 	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
 
 	// 1. Crear una instancia de CORS que permite cualquier origen (*).
