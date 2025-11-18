@@ -1,0 +1,67 @@
+package views
+
+import sqlc "carrito.com/db/sqlc"
+
+templ ProductView(){
+  <!DOCTYPE html>
+  <html lang="es">
+  @Head("Agregar de Productos")
+  <body>
+    @HeaderProductos()
+
+    <main class="main-products">
+        <section class="insert-section">
+            <h1>Agregar Productos</h1>
+            @FormProduct()
+        </section>
+        <section class="list-section">
+            <div class="sort-container">
+                <select 
+                name="sort" 
+                id="order-select"
+                hx-get="/list-products"
+                hx-target="#product-list"
+                hx-trigger="change, load" 
+                >
+                <option value="" selected>Ordenar por Nombre</option>
+                <option value="price-asc">▲ Precio (Menor a Mayor)</option>
+                <option value="price-desc">▼ Precio (Mayor a Menor)</option>
+                </select>
+            </div>
+            <div id="product-list" class="list">
+                @ProductList([]sqlc.Producto{})
+            </div>
+        </section>
+    </main>
+
+    
+    @footer()
+    
+    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+  </body>
+  </html>
+}
+
+templ HeaderProductos() {
+  <header class="header">
+      <nav>
+        <ul class="main-nav">
+          <li class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+              <path fill="none" stroke="black" stroke-width="2" d="M4 12h4l3-6 3 12 3-6h3"/>
+            </svg>
+            <span class="title-logo">Carrito web App</span>
+          </li>
+          <li class="push">
+            <a href="">Agregar Productos</a>
+            </li>
+            <li>
+            <a href="">Agregar Usuarios</a>
+            </li>
+            <li>
+            <a href="">Generar venta</a>
+            </li>
+        </ul>
+      </nav>
+  </header>
+}

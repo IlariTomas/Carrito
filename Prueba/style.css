@@ -1,95 +1,5 @@
-* {
-    padding: 0;
-    margin: 0;
-}
-body{
-    display: grid;
-    grid-template-rows: auto 1fr  auto;
-    grid-template-columns: 1fr;
-    height: 100vh;
-    grid-template-areas: 
-        "header"
-        "main"
-        "footer";
-    grid-gap: 10px;
-}
-header {
-    grid-area: header;
-    background-color: #f8f9fa;
-    padding: 1rem 10rem;
-    border-bottom: 1px solid #eee;
-    display: block;
-}
-.main-nav {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font: 1.2em sans-serif;
-  display: flex;
-}
-.main-nav a {
-    padding: 0.5em 1em;
-    display: block;
-    text-decoration: none;
-    color: black;
-    cursor: pointer;
-}
-.main-nav a:hover {
-    color: #999;
-}
-
-.title-logo {
-    font-weight: bold;
-    font-size: 1.5em;
-}
-
-.push {
-    margin-left: auto;
-}
-.category {
-  position: relative;
-}
-
-.submenu-categorias {
-    list-style: none;
-    margin: 0;
-    padding: 10px;
-    font: 0.9em sans-serif;
-    display: grid;
-    grid-auto-flow: column;              
-    grid-template-rows: repeat(3, auto); 
-    gap: 10px;
-    
-    position: absolute; 
-    top: 100%;
-    left: 0;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-  
-
-    max-height: 0;           
-    overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
-}
-
-.submenu-categorias a {
-  padding: 0.5em 1em;
-  display: block;
-  text-decoration: none;
-  color: black;
-}
-.submenu-categorias li:hover {
-  color: #999;
-}
-
-.category:hover .submenu-categorias {
-  max-height: 500px; /* suficiente para mostrar todo */
-  opacity: 1;
-}
-
-
-/* MAIN */
-.main {
+/* MAIN PRODUCTOS*/
+.main-products {
   grid-area: main;
   margin: 5px auto;
   display: flex;
@@ -105,7 +15,7 @@ header {
   text-align: center;
 }
 
-.main h1 {
+.main-products h1 {
   font-family: sans-serif;
   margin-bottom: 20px;
   color: #333;
@@ -232,29 +142,7 @@ textarea:focus {
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
 }
-/*FOOTER*/
-footer {
-    grid-area: footer;
-    background-color: #f3f3f3;
-    padding: 10px 10px;
-    font-family: sans-serif;
-    background: #333;
-}
 
-.footer-list {
-    list-style: none;
-    margin: 0;
-    padding: 30px;
-    display: flex;
-    justify-content: space-between;
-    color:white;
-}
-
-.footer-left, .footer-right {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
 
 .message {
   margin-top: 10px;

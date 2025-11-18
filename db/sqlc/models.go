@@ -9,7 +9,7 @@ import (
 )
 
 type Carrito struct {
-	IDCarrito     int32        `json:"id_carrito"`
+	IDItem        int32        `json:"id_item"`
 	IDUsuario     int32        `json:"id_usuario"`
 	IDProducto    int32        `json:"id_producto"`
 	Cantidad      int32        `json:"cantidad"`

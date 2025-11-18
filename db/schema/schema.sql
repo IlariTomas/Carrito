@@ -26,7 +26,7 @@ CREATE TABLE venta (
 );
 
 CREATE TABLE carrito (
-    id_carrito SERIAL PRIMARY KEY,
+    id_item SERIAL PRIMARY KEY,
     id_usuario INT NOT NULL,
     id_producto INT NOT NULL,
     cantidad INT NOT NULL,

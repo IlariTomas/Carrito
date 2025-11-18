@@ -3,17 +3,26 @@ package views
 import sqlc "carrito.com/db/sqlc"
 
 templ CarritoList(carrito []sqlc.Carrito) {
+  /*@{
+    totalCarrito := 0
+  }*/
 
-    // Iteramos sobre la lista de productos que recibe
+  if len(carrito) == 0 {
+    <p>El carrito está vacío</p>
+  } else {
     for _, p := range carrito {
-
-        <div class="compra-item">
+      <div class="compra-item">
         <div>
           <h2>Nombre</h2>//{ p.NombreProducto }</h2>
           <p>Cantidad: { p.Cantidad }</p>
+          <!-- @{
+            totalCarrito += p.Precio * p.Cantidad
+          }-->
         </div>
         <div class="compra-item-right">
-          <p>Total: </p>//${ p.Precio * p.Cantidad }</p>
+          <p>Total: 
+          <!--{ p.Precio * p.Cantidad }-->
+          </p>
           <button class="eliminar-compra-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
               <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -28,4 +37,27 @@ templ CarritoList(carrito []sqlc.Carrito) {
         </div>
       </div>    
     }
+    <div>
+      <h5>
+        Total a pagar: <!--{totalCarrito}-->|
+      </h5>
+    </div>
+    <div class="acciones-carrito">
+      <button>Finalizar compra</button>
+      <button>Vaciar carrito</button>
+    </div>
+  }
+}
+
+templ carritoScript() {
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const carritoBtn = document.querySelector('.carrito-btn');
+      const listadoCompras = document.getElementById('listado-compras');
+
+      carritoBtn.addEventListener('click', function() {
+        listadoCompras.classList.toggle('acciones-carrito');
+      });
+    });
+  </script>
 }

@@ -19,16 +19,6 @@ func main() {
 
 	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	// Servir el archivo index.html en la ruta "/"
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			// Si la ruta no existe, mostrar 404
-			notFoundHandler(w, r)
-			return
-		}
-		http.ServeFile(w, r, "index.html")
-	})
-
 	// Página /about
 	mux.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "about.html")
@@ -44,15 +34,10 @@ func main() {
 
 	queries := sqlc.New(db)
 	//Rutas
-	mux.HandleFunc("/users", handle.UsersHandler(queries))
-	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
-	mux.HandleFunc("/user/", handle.UserHandler(queries))
-
+	mux.HandleFunc("/", handle.LayoutHandler(queries))
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
-	mux.HandleFunc("/product/", handle.ProductHandler(queries))
-
-	mux.HandleFunc("/sales", handle.SalesHandler(queries))
-	mux.HandleFunc("/sale/", handle.SaleHandler(queries))
+	mux.HandleFunc("/carrito", handle.CarritoHandler(queries))
+	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
 
 	// 1. Crear una instancia de CORS que permite cualquier origen (*).
 	c := cors.New(cors.Options{

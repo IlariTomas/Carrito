@@ -1,7 +1,6 @@
 package handle
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
@@ -10,7 +9,6 @@ import (
 
 	sqlc "carrito.com/db/sqlc"
 	"carrito.com/views"
-	
 )
 
 func ProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
@@ -29,41 +27,59 @@ func ProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Producto: POST /products
 func createProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req sqlc.CreateProdParams
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "JSON inválido", http.StatusBadRequest)
+
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Error leyendo formulario", http.StatusBadRequest)
 			return
 		}
 
-		if req.NombreProducto == "" || req.Precio == "" {
+		// Obtener valores del formulario
+		nombre := r.FormValue("nombre_producto")
+		descripcion := r.FormValue("descripcion")
+		precio := r.FormValue("precio")
+		stockStr := r.FormValue("stock")
+		categoria := r.FormValue("categoria")
+		imagen := r.FormValue("imagen")
+
+		// Validación básica
+		if nombre == "" || precio == "" {
 			http.Error(w, "Nombre y Precio son requeridos", http.StatusBadRequest)
 			return
 		}
 
-		// CreateProd ahora usa :one y devuelve CreateProdRow
-		product, err := queries.CreateProd(r.Context(), req)
+		stock, err := strconv.Atoi(stockStr)
+		if err != nil {
+			http.Error(w, "Stock inválido", http.StatusBadRequest)
+			return
+		}
+
+		// Crear parámetros para sqlc
+		req := sqlc.CreateProdParams{
+			NombreProducto: nombre,
+			Descripcion:    descripcion,
+			Precio:         precio,
+			Stock:          int32(stock),
+			Categoria:      categoria,
+			Imagen:         imagen,
+		}
+
+		// Crear producto en DB
+		_, err = queries.CreateProd(r.Context(), req)
 		if err != nil {
 			http.Error(w, "Error al crear producto: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		// Respuesta JSON
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(product)
+
 	}
 }
 
 // Producto: GET /products
 func listProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		products, err := queries.ListProd(context.Background())
-		if err != nil {
-			http.Error(w, "Error al listar productos: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(products)
+		views.ProductView().Render(r.Context(), w)
 	}
 }
 
@@ -186,5 +202,57 @@ func ListProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 		componente := views.ProductList(productos)
 		componente.Render(r.Context(), w)
+	}
+}
+
+func LayoutHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		views.Layout().Render(r.Context(), w)
+	}
+}
+
+func CarritoHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			listCartHandler(queries)(w, r) // GET /carrito
+		case http.MethodPost:
+			createCartdHandler(queries)(w, r) // POST /carrito
+		default:
+			w.WriteHeader(http.StatusMethodNotAllowed)
+		}
+	}
+}
+
+func createCartdHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req sqlc.AddToCartParams
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "JSON inválido", http.StatusBadRequest)
+			return
+		}
+
+		if req.IDUsuario == 0 || req.IDProducto == 0 {
+			http.Error(w, "ID de usuario y ID de producto son requeridos", http.StatusBadRequest)
+			return
+		}
+
+		// AddToCart ahora usa :one y devuelve AddToCartRow
+		cartItem, err := queries.AddToCart(r.Context(), req)
+		if err != nil {
+			http.Error(w, "Error al agregar al carrito: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(cartItem)
+	}
+}
+
+// Producto: GET /products
+func listCartHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		views.CarritoList([]sqlc.Carrito{}).Render(r.Context(), w)
 	}
 }
