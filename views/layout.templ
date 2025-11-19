@@ -9,11 +9,9 @@ templ Layout(){
   <body>
     @HeaderLayout()
 
-    <aside id="listado-compras">
-      <p>El carrito está vacío</p>
-      <!-- HTMX reemplaza el contenido de este div con el HTML que devuelve addCartHandler -->
+    <aside class="listado-compras" id="listado-compras">
+      
     </aside>
-
 
     <main class="main">
       <div class="sort-container">
@@ -37,8 +35,9 @@ templ Layout(){
 
     
     @footer()
-    @carritoScript()
+
     <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+    @carritoScript()
   </body>
   </html>
 }
@@ -78,8 +77,13 @@ templ HeaderLayout() {
               <li><a href="#">Libros</a></li>
             </ul>
           </li>
+          <li>
+            <form action="/logout" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+          </li>
           <li >
-            <button class="carrito-btn" >
+            <button class="carrito-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-cart" viewBox="0 0 16 16">
                 <path

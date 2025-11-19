@@ -33,8 +33,22 @@ func main() {
 	defer db.Close()
 
 	queries := sqlc.New(db)
+
 	//Rutas
-	mux.HandleFunc("/", handle.LayoutHandler(queries))
+	mux.HandleFunc("/", handle.IndexPageHandler(queries))
+
+	// 2. Rutas de Autenticación (NUEVAS)
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			// Procesar el formulario (POST)
+			handle.ProcessLoginHandler(queries)(w, r)
+		} else {
+			// Mostrar el formulario (GET)
+			handle.LoginHandler()(w, r)
+		}
+	})
+
+	mux.HandleFunc("/logout", handle.LogoutHandler())
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
 	mux.HandleFunc("/carrito", handle.CartHandler(queries))
 	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))

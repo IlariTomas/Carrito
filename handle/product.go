@@ -11,6 +11,28 @@ import (
 	"carrito.com/views"
 )
 
+// Handler principal con proteccion de login
+func IndexPageHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		// Asegurar que es la ruta raíz exacta
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+
+		// Leer la cookie de sesión
+		_, err := r.Cookie("session_token")
+		if err != nil {
+			// Si hay error (ej: cookie no existe), redirigimos al login
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		views.Layout().Render(r.Context(), w)
+	}
+}
+
 func ProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {

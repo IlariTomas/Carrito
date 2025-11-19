@@ -1,23 +1,30 @@
+# 1. Definimos dinámicamente dónde guarda Go los ejecutables
+GOBIN := $(shell go env GOPATH)/bin
+
 ## Instala las herramientas de desarrollo local necesarias
 setup:
 	@echo "Instalando dependencias de Go (sqlc)..."
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 	@echo "Instalando dependencias de Go (templ)..."
-	go install github.com/valyala/templ/cmd/templ@latest
+	go install github.com/a-h/templ/cmd/templ@latest
 	
 sqlc:
 	@echo "Generando código Go con sqlc..."
-	sqlc generate
+	# 2. Usamos la ruta completa para ejecutar sqlc
+	$(GOBIN)/sqlc generate
 
 templ:    
 	@echo "Generando vistas con templ..."
-	templ generate 
+	# 3. Usamos la ruta completa para ejecutar templ
+	$(GOBIN)/templ generate 
 
 ## Construye y levanta los contenedores (api, db)
+# Agregamos 'setup' aquí si quieres asegurar que se instalen, 
+# pero idealmente 'setup' se corre una sola vez manualmente.
 build: sqlc templ
 	@echo "Construyendo y levantando contenedores (api, db)..."
-	docker compose up --build -d db api
+	docker compose up --build db api
 
 ## Ejecuta los tests de Hurl (levanta 'tester' y depende de 'api')
 test:
@@ -30,14 +37,10 @@ stop:
 	docker compose stop
 
 clean:
-	@echo "Limpiando contenedores y volúmenes (reseteando la base de datos)..."
+	@echo "Limpiando contenedores y volúmenes..."
 	docker compose down -v
 
-## Alias para 'make build'
+## Alias
 up: build
-
-## Alias para 'make stop'
 down: stop
-
-## Ejecuta el ciclo completo: Limpia, construye y prueba.
-full-reset: clean build test
+full-reset: clean build
