@@ -48,6 +48,16 @@ func main() {
 		}
 	})
 
+	mux.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			// Procesar registro (Insert en BD)
+			handle.ProcessRegisterHandler(queries)(w, r)
+		} else {
+			// Mostrar página de registro
+			handle.RegisterPageHandler()(w, r)
+		}
+	})
+
 	mux.HandleFunc("/logout", handle.LogoutHandler())
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
 	mux.HandleFunc("/carrito", handle.CartHandler(queries))

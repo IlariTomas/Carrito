@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import sqlc "carrito.com/db/sqlc"
 
-func ProductView() templ.Component {
+func UserView() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -47,19 +47,19 @@ func ProductView() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<main class=\"main-products\"><section class=\"insert-section\"><h1>Agregar Productos</h1>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<main class=\"main-products\"><section class=\"insert-section\"><h1>Agregar Usuarios</h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = FormProduct().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = FormUser().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><section class=\"list-section\"><div class=\"sort-container\"><select name=\"sort\" id=\"order-select\" hx-get=\"/list-products\" hx-target=\"#product-list\" hx-trigger=\"change, load\"><option value=\"\" selected>Ordenar por Nombre</option> <option value=\"price-asc\">▲ Precio (Menor a Mayor)</option> <option value=\"price-desc\">▼ Precio (Mayor a Menor)</option></select></div><div id=\"product-list\" class=\"list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><section class=\"list-section\"><h2>Listado de Usuarios</h2><div id=\"users-list\" class=\"list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ProductList([]sqlc.Producto{}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ListUser([]sqlc.Usuario{}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -79,7 +79,7 @@ func ProductView() templ.Component {
 	})
 }
 
-func HeaderProductos() templ.Component {
+func ListUser(user []sqlc.Usuario) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -100,9 +100,37 @@ func HeaderProductos() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<header class=\"header\"><nav><ul class=\"main-nav\"><li class=\"logo\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"32\" height=\"32\"><path fill=\"none\" stroke=\"black\" stroke-width=\"2\" d=\"M4 12h4l3-6 3 12 3-6h3\"></path></svg> <span class=\"title-logo\">Carrito web App</span></li><li class=\"push\"><a href=\"/products\">Agregar Productos</a></li><li><a href=\"/users\">Agregar Usuarios</a></li></ul></nav></header>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		for _, u := range user {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"user-item\"><p><strong>Nombre:</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(u.NombreUsuario)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout_user.templ`, Line: 36, Col: 57}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p><p><strong>Email:</strong> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(u.Email)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout_user.templ`, Line: 37, Col: 48}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		return nil
 	})

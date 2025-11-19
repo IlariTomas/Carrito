@@ -1,13 +1,13 @@
 package handle
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
 
 	sqlc "carrito.com/db/sqlc"
+	"carrito.com/views"
 )
 
 // usersHandler maneja todas las peticiones a /users
@@ -17,7 +17,7 @@ func UsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 		case http.MethodGet:
 			listUsersHandler(queries)(w, r) // GET /users
 		case http.MethodPost:
-			createUserHandler(queries)(w, r) // POST /user
+			createUserHandler(queries)(w, r) // POST /users
 		default:
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
@@ -27,10 +27,16 @@ func UsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 // POST /users
 func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req sqlc.CreateUserParams
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "JSON inválido", http.StatusBadRequest)
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Error leyendo formulario", http.StatusBadRequest)
 			return
+		}
+		nombreUsuario := r.FormValue("name_user")
+		email := r.FormValue("email_user")
+		print("Nombre:"+nombreUsuario, "Email:"+email)
+		req := sqlc.CreateUserParams{
+			NombreUsuario: nombreUsuario,
+			Email:         email,
 		}
 
 		if req.NombreUsuario == "" || req.Email == "" {
@@ -38,30 +44,28 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		user, err := queries.CreateUser(r.Context(), req)
+		_, err := queries.CreateUser(r.Context(), req)
 		if err != nil {
 			http.Error(w, "Error al crear usuario: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
+		// Recargar la lista de usuarios luego de crear uno
+		users, err := queries.ListUsers(r.Context())
+		if err != nil {
+			http.Error(w, "Error cargando usuarios: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(user)
+		views.ListUser(users).Render(r.Context(), w)
 	}
 }
 
 // GET /users
 func listUsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		users, err := queries.ListUsers(context.Background())
-		if err != nil {
-			http.Error(w, "Error al listar usuarios: "+err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		json.NewEncoder(w).Encode(users)
+		views.UserView().Render(r.Context(), w)
 	}
 }
 
