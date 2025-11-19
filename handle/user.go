@@ -65,7 +65,12 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 // GET /users
 func listUsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		views.UserView().Render(r.Context(), w)
+		users, err := queries.ListUsers(r.Context())
+		if err != nil {
+			http.Error(w, "Error cargando usuarios: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		views.UserView(users).Render(r.Context(), w)
 	}
 }
 
