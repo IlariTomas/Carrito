@@ -47,7 +47,7 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<aside id=\"listado-compras\"><p>El carrito está vacío</p><!-- HTMX reemplaza el contenido de este div con el HTML que devuelve addCartHandler --></aside><main class=\"main\"><div class=\"sort-container\"><select name=\"sort\" id=\"order-select\" hx-get=\"/list-products\" hx-target=\"#product-list\" hx-trigger=\"change, load\"><option value=\"\" selected>Ordenar por Nombre</option> <option value=\"price-asc\">▲ Precio (Menor a Mayor)</option> <option value=\"price-desc\">▼ Precio (Mayor a Menor)</option></select></div><div id=\"product-list\" class=\"products-container\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<aside class=\"listado-compras\" id=\"listado-compras\"></aside><main class=\"main\"><div class=\"sort-container\"><select name=\"sort\" id=\"order-select\" hx-get=\"/list-products\" hx-target=\"#product-list\" hx-trigger=\"change, load\"><option value=\"\" selected>Ordenar por Nombre</option> <option value=\"price-asc\">▲ Precio (Menor a Mayor)</option> <option value=\"price-desc\">▼ Precio (Mayor a Menor)</option></select></div><div id=\"product-list\" class=\"products-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -63,11 +63,15 @@ func Layout() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script src=\"https://unpkg.com/htmx.org@1.9.10\" defer></script>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = carritoScript().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script src=\"https://unpkg.com/htmx.org@1.9.10\" defer></script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -96,20 +100,20 @@ func Head(title string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout.templ`, Line: 50, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/layout.templ`, Line: 49, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</title><link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"static/style.css\"></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</title><link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC\" crossorigin=\"anonymous\"><link rel=\"stylesheet\" href=\"static/style.css\"></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -138,7 +142,7 @@ func HeaderLayout() templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<header class=\"header\"><nav><ul class=\"main-nav\"><li class=\"logo\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"32\" height=\"32\"><path fill=\"none\" stroke=\"black\" stroke-width=\"2\" d=\"M4 12h4l3-6 3 12 3-6h3\"></path></svg> <span class=\"title-logo\">Carrito web App</span></li><li class=\"push\"><a aria-current=\"page\" href=\"#\">Productos</a></li><li><a href=\"#\">Mis Compras</a></li><li class=\"category\"><a href=\"#\">Categorías</a><ul class=\"submenu-categorias\"><li><a href=\"#\">Electrónica</a></li><li><a href=\"#\">Ropa</a></li><li><a href=\"#\">Hogar</a></li><li><a href=\"#\">Libros</a></li></ul></li><li><form action=\"/logout\" method=\"POST\" style=\"display:inline;\"><button type=\"submit\" class=\"btn btn-danger\" style=\"margin-left: 10px;\">Logout</button></form></li><li><button class=\"carrito-btn\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-cart\" viewBox=\"0 0 16 16\"><path d=\"M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2\"></path></svg></button></li></ul></nav></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<header class=\"header\"><nav><ul class=\"main-nav\"><li class=\"logo\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"32\" height=\"32\"><path fill=\"none\" stroke=\"black\" stroke-width=\"2\" d=\"M4 12h4l3-6 3 12 3-6h3\"></path></svg> <span class=\"title-logo\">Carrito web App</span></li><li class=\"push\"><a aria-current=\"page\" href=\"#\">Productos</a></li><li><a href=\"#\">Mis Compras</a></li><li class=\"category\"><a href=\"#\">Categorías</a><ul class=\"submenu-categorias\"><li><a href=\"#\">Electrónica</a></li><li><a href=\"#\">Ropa</a></li><li><a href=\"#\">Hogar</a></li><li><a href=\"#\">Libros</a></li></ul></li><li><form action=\"/logout\" method=\"POST\" style=\"display:inline;\"><button type=\"submit\" class=\"delete-btn\">Logout</button></form></li><li><button class=\"carrito-btn\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi bi-cart\" viewBox=\"0 0 16 16\"><path d=\"M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2\"></path></svg></button></li></ul></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -167,7 +171,7 @@ func footer() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<footer class=\"footer\"><ul class=\"footer-list\"><div class=\"footer-left\"><li>&copy; 2025 Carrito de Compras</li><li>Proyecto Especias Programacion Web 2025</li></div><div class=\"footer-right\"><li>Tomas Ilari</li><li>Juan Abraham</li><li>Martino Masson</li></div></ul></footer>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<footer class=\"footer\"><ul class=\"footer-list\"><div class=\"footer-left\"><li>&copy; 2025 Carrito de Compras</li><li>Proyecto Especias Programacion Web 2025</li></div><div class=\"footer-right\"><li>Tomas Ilari</li><li>Juan Abraham</li><li>Martino Masson</li></div></ul></footer>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

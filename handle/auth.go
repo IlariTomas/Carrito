@@ -8,61 +8,118 @@ import (
 	"carrito.com/views"
 )
 
-// GET /login -> Muestra el formulario
+// --- LOGIN ---
+
 func LoginHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Renderizamos la vista que creamos arriba
 		views.LoginPage().Render(r.Context(), w)
 	}
 }
 
-// POST /login -> Procesa los datos
 func ProcessLoginHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// 1. Leer formulario
 		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Error leyendo datos", http.StatusBadRequest)
+			views.AlertError("Error leyendo datos del formulario").Render(r.Context(), w)
 			return
 		}
 
 		email := r.FormValue("email")
 		usuario := r.FormValue("usuario")
 
+		// Validación Mock
 		usuarioValido := false
-		if email == "admin@test.com" && usuario == "tomi" {
+		if (email == "admin@test.com" && usuario == "1234") || email != "" {
 			usuarioValido = true
 		}
 
-		if !usuarioValido {
-			http.Error(w, "Credenciales incorrectas", http.StatusUnauthorized)
+		// Verificar si el usuario existe en la base de datos
+		user, err := queries.GetUserByEmail(r.Context(), email)
+		if err != nil || user.Email == "" {
+			views.AlertError("Usuario no encontrado. Regístrate primero.").Render(r.Context(), w)
 			return
 		}
 
-		// Si es válido, le damos una cookie al navegador
+		if !usuarioValido {
+			views.AlertError("Credenciales incorrectas. Intenta de nuevo.").Render(r.Context(), w)
+			return
+		}
+
+		// CREAR SESIÓN
 		expiration := time.Now().Add(24 * time.Hour)
 		cookie := http.Cookie{
 			Name:    "session_token",
-			Value:   "usuario_autenticado_123", // En la realidad, esto sería un token seguro
+			Value:   "usuario_autenticado_" + email,
 			Expires: expiration,
-			Path:    "/", // Valido para toda la pagina
+			Path:    "/",
 		}
 		http.SetCookie(w, &cookie)
 
-		// 4. Redirigir al Home
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
-// Logout: Borra la cookie
 func LogoutHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie := http.Cookie{
 			Name:    "session_token",
 			Value:   "",
-			Expires: time.Now().Add(-1 * time.Hour), // Fecha pasada = borrar
+			Expires: time.Now().Add(-1 * time.Hour),
 			Path:    "/",
 		}
 		http.SetCookie(w, &cookie)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+}
+
+// --- REGISTRO ---
+
+func RegisterPageHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		views.RegisterPage().Render(r.Context(), w)
+	}
+}
+
+func ProcessRegisterHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := r.ParseForm(); err != nil {
+			views.AlertError("Error leyendo formulario").Render(r.Context(), w)
+			return
+		}
+
+		nombre := r.FormValue("usuario")
+		email := r.FormValue("email")
+
+		if nombre == "" || email == "" {
+			views.AlertError("Nombre y Email son requeridos").Render(r.Context(), w)
+			return
+		}
+
+		params := sqlc.CreateUserParams{
+			NombreUsuario: nombre,
+			Email:         email,
+		}
+
+		_, err := queries.CreateUser(r.Context(), params)
+		if err != nil {
+			// Error de base de datos (ej: usuario duplicado)
+			views.AlertError("Error al registrar: prueba con otro usuario/email.").Render(r.Context(), w)
+			return
+		}
+
+		// ÉXITO: Redirigimos al login usando HTMX
+
+		// CREAR SESIÓN
+		expiration := time.Now().Add(24 * time.Hour)
+		cookie := http.Cookie{
+			Name:    "session_token",
+			Value:   "usuario_autenticado_" + email,
+			Expires: expiration,
+			Path:    "/",
+		}
+		http.SetCookie(w, &cookie)
+
+		w.Header().Set("HX-Redirect", "/")
+		w.WriteHeader(http.StatusOK)
 	}
 }
