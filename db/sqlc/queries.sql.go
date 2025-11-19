@@ -245,6 +245,17 @@ func (q *Queries) GetUser(ctx context.Context, idUsuario int32) (GetUserRow, err
 	return i, err
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id_usuario, nombre_usuario, email FROM usuario WHERE email = $1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Usuario, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i Usuario
+	err := row.Scan(&i.IDUsuario, &i.NombreUsuario, &i.Email)
+	return i, err
+}
+
 const getVenta = `-- name: GetVenta :one
 SELECT id_venta, id_producto, id_usuario, cantidad, total, fecha FROM venta WHERE id_venta = $1
 `

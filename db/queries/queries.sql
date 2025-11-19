@@ -16,6 +16,9 @@ SELECT * FROM venta WHERE id_venta = $1;
 -- name: GetVenta_usuario :one
 SELECT * FROM venta WHERE id_usuario = $1;
 
+-- name: GetUserByEmail :one
+SELECT id_usuario, nombre_usuario, email FROM usuario WHERE email = $1;
+
 -- name: GetUser :one
 SELECT nombre_usuario, email FROM usuario WHERE id_usuario = $1;
 
