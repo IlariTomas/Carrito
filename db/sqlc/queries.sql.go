@@ -116,12 +116,30 @@ func (q *Queries) CreateVenta(ctx context.Context, arg CreateVentaParams) (Ventu
 	return i, err
 }
 
+const deleteCart = `-- name: DeleteCart :exec
+DELETE FROM carrito WHERE id_usuario = $1
+`
+
+func (q *Queries) DeleteCart(ctx context.Context, idUsuario int32) error {
+	_, err := q.db.ExecContext(ctx, deleteCart, idUsuario)
+	return err
+}
+
 const deleteProd = `-- name: DeleteProd :exec
 DELETE FROM producto WHERE id_producto = $1
 `
 
 func (q *Queries) DeleteProd(ctx context.Context, idProducto int32) error {
 	_, err := q.db.ExecContext(ctx, deleteProd, idProducto)
+	return err
+}
+
+const deleteProdCarrito = `-- name: DeleteProdCarrito :exec
+DELETE FROM carrito WHERE id_item = $1
+`
+
+func (q *Queries) DeleteProdCarrito(ctx context.Context, idItem int32) error {
+	_, err := q.db.ExecContext(ctx, deleteProdCarrito, idItem)
 	return err
 }
 
@@ -490,24 +508,6 @@ func (q *Queries) ListVentasUsuario(ctx context.Context, idUsuario int32) ([]Ven
 		return nil, err
 	}
 	return items, nil
-}
-
-const removeCart = `-- name: RemoveCart :exec
-DELETE FROM carrito WHERE id_usuario = $1
-`
-
-func (q *Queries) RemoveCart(ctx context.Context, idUsuario int32) error {
-	_, err := q.db.ExecContext(ctx, removeCart, idUsuario)
-	return err
-}
-
-const removeCartItems = `-- name: RemoveCartItems :exec
-DELETE FROM carrito WHERE id_item = $1
-`
-
-func (q *Queries) RemoveCartItems(ctx context.Context, idItem int32) error {
-	_, err := q.db.ExecContext(ctx, removeCartItems, idItem)
-	return err
 }
 
 const updateCartItem = `-- name: UpdateCartItem :exec

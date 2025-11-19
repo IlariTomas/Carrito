@@ -33,7 +33,7 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 		nombreUsuario := r.FormValue("name_user")
 		email := r.FormValue("email_user")
-		print("Nombre:"+nombreUsuario, "Email:"+email)
+
 		req := sqlc.CreateUserParams{
 			NombreUsuario: nombreUsuario,
 			Email:         email,

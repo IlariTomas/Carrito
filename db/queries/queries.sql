@@ -67,10 +67,10 @@ SELECT id_producto, nombre_producto, descripcion, precio, stock, categoria, imag
 -- name: AddToCart :one
 INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES ($1, $2, $3) RETURNING *;
 
--- name: RemoveCartItems :exec
+-- name: DeleteProdCarrito :exec
 DELETE FROM carrito WHERE id_item = $1;
 
--- name: RemoveCart :exec
+-- name: DeleteCart :exec
 DELETE FROM carrito WHERE id_usuario = $1;
 
 -- name: UpdateCartItem :exec

@@ -10,7 +10,7 @@ templ Layout(){
     @HeaderLayout()
 
     <aside class="listado-compras" id="listado-compras">
-      
+      @CarritoList([]sqlc.GetCartItemsRow{})
     </aside>
 
     <main class="main">

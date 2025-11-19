@@ -59,7 +59,7 @@ func deleteCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		err = queries.RemoveCart(r.Context(), int32(id))
+		err = queries.DeleteCart(r.Context(), int32(id))
 		if err != nil {
 			http.Error(w, "Error al eliminar carrito: "+err.Error(), http.StatusInternalServerError)
 			return
@@ -79,7 +79,7 @@ func CartItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 		case http.MethodPut:
 			updateItemHandler(queries)(w, r) // PUT /carrito/items/{id}
 		case http.MethodDelete:
-			deleteCartHandler(queries)(w, r) // DELETE /carrito/items/{id}
+			deleteCartItemsHandler(queries)(w, r) // DELETE /carrito/items/{id}
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
@@ -166,5 +166,24 @@ func updateItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"status":"ok"}`))
+	}
+}
+
+func deleteCartItemsHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.URL.Path[len("/carrito/items"):]
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "ID de carrito inválido", http.StatusBadRequest)
+			return
+		}
+
+		err = queries.DeleteProdCarrito(r.Context(), int32(id))
+		if err != nil {
+			http.Error(w, "Error al eliminar producto del carrito: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 	}
 }

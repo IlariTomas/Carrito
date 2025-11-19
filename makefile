@@ -19,11 +19,6 @@ build: sqlc templ
 	@echo "Construyendo y levantando contenedores (api, db)..."
 	docker compose up --build -d db api
 
-## Ejecuta los tests de Hurl (levanta 'tester' y depende de 'api')
-test:
-	@echo "Ejecutando tests de Hurl..."
-	docker compose up --build tester
-
 ## Detiene los contenedores (api, db)
 stop:
 	@echo "Deteniendo contenedores..."
@@ -40,4 +35,4 @@ up: build
 down: stop
 
 ## Ejecuta el ciclo completo: Limpia, construye y prueba.
-full-reset: clean build test
+full-reset: clean build

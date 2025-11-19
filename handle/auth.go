@@ -9,8 +9,17 @@ import (
 )
 
 // --- LOGIN ---
+func LoginHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			ProcessLoginHandler(queries)(w, r) // Procesar el formulario (POST)
+		} else {
+			getLoginHandler()(w, r) // Mostrar el formulario (GET)
+		}
+	}
+}
 
-func LoginHandler() http.HandlerFunc {
+func getLoginHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		views.LoginPage().Render(r.Context(), w)
 	}
@@ -73,6 +82,15 @@ func LogoutHandler() http.HandlerFunc {
 }
 
 // --- REGISTRO ---
+func RegisterHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			ProcessRegisterHandler(queries)(w, r) // Procesar registro (Insert en BD)
+		} else {
+			RegisterPageHandler()(w, r) // GET Mostrar página de registro
+		}
+	}
+}
 
 func RegisterPageHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
