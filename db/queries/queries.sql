@@ -75,3 +75,6 @@ UPDATE carrito SET cantidad = $2 WHERE id_item = $1;
 
 -- name: GetCartItems :many
 SELECT c.*, p.nombre_producto, p.precio FROM carrito c JOIN producto p ON c.id_producto = p.id_producto WHERE c.id_usuario = $1;
+
+-- name: GetCartItemByUserAndProduct :one
+SELECT * FROM carrito WHERE id_usuario = $1 AND id_producto = $2;

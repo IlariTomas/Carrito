@@ -2,6 +2,7 @@ package views
 
 import (
     sqlc "carrito.com/db/sqlc"
+    "strconv"
 )
 
 templ ProductList(productos []sqlc.Producto) {
@@ -25,19 +26,13 @@ templ ProductList(productos []sqlc.Producto) {
             </p>
             <button 
                 class="add-to-cart-btn"
-                hx-post="/carrito/items/{prod}"
+                hx-post={"/carrito/items/" + strconv.Itoa(int(p.IDProducto))}
+                hx-target="#listado-compras"
+                hx-swap="innerHTML"
             >
                 Agregar al carrito
             </button>
-
         </div>
         
     }
-    @ProductScript()
-}
-
-templ ProductScript() {
-    <script>
-
-    </script>
 }

@@ -8,7 +8,10 @@ package views
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import sqlc "carrito.com/db/sqlc"
+import (
+	sqlc "carrito.com/db/sqlc"
+	"strconv"
+)
 
 func CarritoList(carrito []sqlc.GetCartItemsRow) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -38,25 +41,51 @@ func CarritoList(carrito []sqlc.GetCartItemsRow) templ.Component {
 			}
 		} else {
 			for _, p := range carrito {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"compra-item\"><div><h2>Nombre</h2><p>Cantidad: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"compra-item\"><div><h2>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
-				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.Cantidad)
+				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.NombreProducto)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 17, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 15, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><!-- @{\n            totalCarrito += p.Precio * p.Cantidad\n          }--></div><div class=\"compra-item-right\"><p>Total: <!--{ p.Precio * p.Cantidad }--></p><button class=\"eliminar-compra-button\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><g fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 6h18\"></path> <path d=\"M8 6l1-2h6l1 2\"></path> <path d=\"M6 6l1 14a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5L18 6\"></path> <path d=\"M10 11v6\"></path> <path d=\"M14 11v6\"></path></g></svg></button></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h2><p>Cantidad: ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.Cantidad)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 16, Col: 45}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p></div><div class=\"compra-item-right\"><p>Total: </p><button class=\"eliminar-compra-button\" hx-delete=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var4 string
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/carrito/items/" + strconv.Itoa(int(p.IDProducto)))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 24, Col: 86}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#listado-compras\" hx-swap=\"innerHTML\">🗑️</button></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " <div><h5>Total a pagar: <!--{totalCarrito}-->|</h5></div><div class=\"acciones-carrito\"><button>Finalizar compra</button> <button>Vaciar carrito</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " <div><h5>Total a pagar: </h5></div><div class=\"acciones-carrito\"><button>Finalizar compra</button> <button>Vaciar carrito</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -81,12 +110,12 @@ func carritoScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script>\n    document.addEventListener('DOMContentLoaded', function() {\n      const carritoBtn = document.querySelector('.carrito-btn');\n      const listadoCompras = document.getElementById('listado-compras');\n\n      carritoBtn.addEventListener('click', function() {\n        listadoCompras.classList.toggle('acciones-carrito');\n      });\n    });\n  </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n    document.addEventListener('DOMContentLoaded', function() {\n      const carritoBtn = document.querySelector('.carrito-btn');\n      const listadoCompras = document.getElementById('listado-compras');\n\n      carritoBtn.addEventListener('click', function() {\n        listadoCompras.classList.toggle('acciones-carrito');\n      });\n    });\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

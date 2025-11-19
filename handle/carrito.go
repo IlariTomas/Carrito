@@ -2,7 +2,6 @@ package handle
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -27,7 +26,6 @@ func CartHandler(queries *sqlc.Queries) http.HandlerFunc {
 // getCartHandler obtiene los items de un carrito por su ID
 func getCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Extraer ID del carrito desde la URL
 		idStr := r.URL.Path[len("/carrito/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
@@ -47,7 +45,8 @@ func getCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 
 		// Renderizar la vista templ
-		views.CarritoList(carritoItems).Render(r.Context(), w)
+		componente := views.CarritoList(carritoItems)
+		componente.Render(r.Context(), w)
 	}
 }
 
@@ -70,6 +69,8 @@ func deleteCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	}
 }
 
+// HANDLERS PARA ITEMS DEL CARRITO
+
 func CartItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -88,72 +89,71 @@ func CartItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 func addCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Error leyendo formulario", http.StatusBadRequest)
-			return
-		}
-
-		// Obtener valores del formulario
-		nombre := r.FormValue("nombre_producto")
-		descripcion := r.FormValue("descripcion")
-		precio := r.FormValue("precio")
-		stockStr := r.FormValue("stock")
-		categoria := r.FormValue("categoria")
-		imagen := r.FormValue("imagen")
-
-		// Validación básica
-		if nombre == "" || precio == "" {
-			http.Error(w, "Nombre y Precio son requeridos", http.StatusBadRequest)
-			return
-		}
-
-		stock, err := strconv.Atoi(stockStr)
+		idUsuario := 1
+		idStr := r.URL.Path[len("/carrito/items/"):]
+		idProducto, err := strconv.Atoi(idStr)
 		if err != nil {
-			http.Error(w, "Stock inválido", http.StatusBadRequest)
+			http.Error(w, "ID de producto inválido", http.StatusBadRequest)
 			return
 		}
 
-		// Crear parámetros para sqlc
-		req := sqlc.CreateProdParams{
-			NombreProducto: nombre,
-			Descripcion:    descripcion,
-			Precio:         precio,
-			Stock:          int32(stock),
-			Categoria:      categoria,
-			Imagen:         imagen,
+		// Intento obtener el item del carrito
+		item, err := queries.GetCartItemByUserAndProduct(
+			r.Context(),
+			sqlc.GetCartItemByUserAndProductParams{
+				IDUsuario:  int32(idUsuario),
+				IDProducto: int32(idProducto),
+			},
+		)
+
+		if err == nil {
+			// Existe → sumo cantidad
+			update := sqlc.UpdateCartItemParams{
+				IDItem:   item.IDItem,
+				Cantidad: item.Cantidad + 1,
+			}
+
+			if err := queries.UpdateCartItem(r.Context(), update); err != nil {
+				http.Error(w, "Error al actualizar cantidad", http.StatusInternalServerError)
+				return
+			}
+
+		} else {
+			// No existe → creo nuevo
+			req := sqlc.AddToCartParams{
+				IDUsuario:  int32(idUsuario),
+				IDProducto: int32(idProducto),
+				Cantidad:   1,
+			}
+
+			if _, err := queries.AddToCart(r.Context(), req); err != nil {
+				http.Error(w, "Error al agregar producto", http.StatusInternalServerError)
+				return
+			}
 		}
 
-		// Crear producto en DB
-		_, err = queries.CreateProd(r.Context(), req)
+		// 🔹 Renderizo solo el carrito actualizado
+		carritoItems, err := queries.GetCartItems(r.Context(), int32(idUsuario))
 		if err != nil {
-			http.Error(w, "Error al crear producto: "+err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Error cargando carrito", http.StatusInternalServerError)
 			return
 		}
 
-		// Respuesta JSON
-		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("Producto creado correctamente"))
+		componente := views.CarritoList(carritoItems)
+		componente.Render(r.Context(), w)
 	}
 }
 
 func updateItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Extraer ID del item desde la URL
 		idStr := r.URL.Path[len("/carrito/items/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID del item inválido", http.StatusBadRequest)
 			return
 		}
-
-		// Parsear JSON del body
 		var req sqlc.UpdateCartItemParams
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "JSON inválido", http.StatusBadRequest)
-			return
-		}
 
-		// Asignar el ID de la URL
 		req.IDItem = int32(id)
 
 		// Ejecutar la actualización en la base de datos

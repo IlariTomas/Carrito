@@ -69,10 +69,16 @@ func createProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 			http.Error(w, "Error al crear producto: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		// Recargar la lista de productos luego de crear uno
+		productos, err := queries.ListProd(r.Context())
+		if err != nil {
+			http.Error(w, "Error cargando productos: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		// Respuesta JSON
 		w.WriteHeader(http.StatusCreated)
-		w.Write([]byte("Producto creado correctamente"))
+		views.ProductList(productos).Render(r.Context(), w)
 	}
 }
 

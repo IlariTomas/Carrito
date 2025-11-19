@@ -143,6 +143,28 @@ func (q *Queries) DeleteVenta(ctx context.Context, idVenta int32) error {
 	return err
 }
 
+const getCartItemByUserAndProduct = `-- name: GetCartItemByUserAndProduct :one
+SELECT id_item, id_usuario, id_producto, cantidad, fecha_agregado FROM carrito WHERE id_usuario = $1 AND id_producto = $2
+`
+
+type GetCartItemByUserAndProductParams struct {
+	IDUsuario  int32 `json:"id_usuario"`
+	IDProducto int32 `json:"id_producto"`
+}
+
+func (q *Queries) GetCartItemByUserAndProduct(ctx context.Context, arg GetCartItemByUserAndProductParams) (Carrito, error) {
+	row := q.db.QueryRowContext(ctx, getCartItemByUserAndProduct, arg.IDUsuario, arg.IDProducto)
+	var i Carrito
+	err := row.Scan(
+		&i.IDItem,
+		&i.IDUsuario,
+		&i.IDProducto,
+		&i.Cantidad,
+		&i.FechaAgregado,
+	)
+	return i, err
+}
+
 const getCartItems = `-- name: GetCartItems :many
 SELECT c.id_item, c.id_usuario, c.id_producto, c.cantidad, c.fecha_agregado, p.nombre_producto, p.precio FROM carrito c JOIN producto p ON c.id_producto = p.id_producto WHERE c.id_usuario = $1
 `
