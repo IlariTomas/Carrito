@@ -10,7 +10,6 @@
 
     #   Copia el código fuente y estáticos desde la raíz del contexto
     COPY main.go .
-    COPY index.html .
     COPY about.html .
     COPY static ./static
     COPY db ./db
@@ -29,7 +28,6 @@
 
     #   Copia los archivos compilados desde la etapa anterior
     COPY --from=builder /api/carrito .
-    COPY --from=builder /api/index.html .
     COPY --from=builder /api/about.html .
     COPY --from=builder /api/static ./static
 

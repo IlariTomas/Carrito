@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	sqlc "carrito.com/db/sqlc"
-	"carrito.com/views"
 )
 
 // usersHandler maneja todas las peticiones a /users
@@ -51,26 +50,26 @@ func createUserHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 
 		// Recargar la lista de usuarios luego de crear uno
-		users, err := queries.ListUsers(r.Context())
+		/*users, err := queries.ListUsers(r.Context())
 		if err != nil {
 			http.Error(w, "Error cargando usuarios: "+err.Error(), http.StatusInternalServerError)
 			return
-		}
+		}*/
 
 		w.WriteHeader(http.StatusCreated)
-		views.ListUser(users).Render(r.Context(), w)
+		//views.ListUser(users).Render(r.Context(), w)
 	}
 }
 
 // GET /users
 func listUsersHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		users, err := queries.ListUsers(r.Context())
+		/*users, err := queries.ListUsers(r.Context())
 		if err != nil {
 			http.Error(w, "Error cargando usuarios: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		views.UserView(users).Render(r.Context(), w)
+		views.UserView(users).Render(r.Context(), w)*/
 	}
 }
 

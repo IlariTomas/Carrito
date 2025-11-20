@@ -286,6 +286,9 @@ footer {
   color: #666;
 }
 
+p{
+  margin: 0;
+}
 /*  BOTÓN ELIMINAR  */
 .eliminar-compra-button {
   background: none;
@@ -332,7 +335,7 @@ footer {
 
 .compra-item-right{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 5px;
 }
 
@@ -394,6 +397,12 @@ label {
 }
 
 /* Inputs, select y textarea */
+.cantidad-input {
+    width: 40px;
+    padding: 5px;
+    font-size: 15px;
+}
+
 input,
 select,
 textarea {
@@ -479,17 +488,7 @@ textarea:focus {
   gap: 5px;
   align-items: baseline;
 }
-.delete-btn {
-    margin-left: auto;
-    background-color: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-}
+
 
 
 .message {
@@ -510,3 +509,4 @@ textarea:focus {
 .user-item p{
     margin: 0;
 }
+

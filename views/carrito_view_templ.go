@@ -41,51 +41,77 @@ func CarritoList(carrito []sqlc.GetCartItemsRow) templ.Component {
 			}
 		} else {
 			for _, p := range carrito {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"compra-item\"><div><h2>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div><h2>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(p.NombreProducto)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 15, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 14, Col: 38}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h2><p>Cantidad: ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h2><div class=\"compra-item\"><div><p>Cantidad:  <input type=\"number\" class=\"cantidad-input\" value=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(p.Cantidad)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 16, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 18, Col: 86}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p></div><div class=\"compra-item-right\"><p>Total: </p><button class=\"eliminar-compra-button\" hx-delete=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" min=\"1\"></p></div><div class=\"compra-item-right\"><p>Total: ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/carrito/items/" + strconv.Itoa(int(p.IDProducto)))
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(calcularPrecioTotal(p.Cantidad, p.Precio))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 24, Col: 86}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 23, Col: 77}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" hx-target=\"#listado-compras\" hx-swap=\"innerHTML\">🗑️</button></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p><button class=\"eliminar-compra-button\" hx-delete=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var5 string
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(generadorRuta(p.IDItem))
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 27, Col: 62}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" hx-target=\"#listado-compras\" hx-swap=\"innerHTML\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"26\" height=\"26\" viewBox=\"0 0 64 64\" role=\"img\" aria-label=\"Tarro de basura\"><title>Tarro de basura</title><path d=\"M20 18 L44 18 L42 50 L22 50 Z M16 14 L48 14 L48 18 L16 18 Z M28 8 L36 8 L36 14 L28 14 Z\" fill=\"#FFFFFF\" stroke=\"#C7C7C7\" stroke-width=\"2\"></path></svg></button></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " <div><h5>Total a pagar: </h5></div><div class=\"acciones-carrito\"><button>Finalizar compra</button> <button>Vaciar carrito</button></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, " <div><h5>Total a pagar: ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(calcularTotal(carrito))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/carrito_view.templ`, Line: 43, Col: 55}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</h5></div><div class=\"acciones-carrito\"><button>Finalizar compra</button> <button hx-delete=\"/carrito\" hx-target=\"#listado-compras\" hx-swap=\"innerHTML\">Vaciar carrito</button></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -110,17 +136,37 @@ func carritoScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script>\n    document.addEventListener('DOMContentLoaded', function() {\n      const carritoBtn = document.querySelector('.carrito-btn');\n      const listadoCompras = document.getElementById('listado-compras');\n\n      carritoBtn.addEventListener('click', function() {\n        listadoCompras.classList.toggle('acciones-carrito');\n      });\n    });\n  </script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<script>\n    document.addEventListener('DOMContentLoaded', function() {\n      const carritoBtn = document.querySelector('.carrito-btn');\n      const listadoCompras = document.getElementById('listado-compras');\n\n      carritoBtn.addEventListener('click', function() {\n        listadoCompras.classList.toggle('acciones-carrito');\n      });\n    });\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		return nil
 	})
+}
+
+func calcularPrecioTotal(cantidad int32, precio string) float64 {
+	precioFloat, err := strconv.ParseFloat(precio, 64)
+	if err != nil {
+		return 0.0
+	}
+	return float64(cantidad) * precioFloat
+}
+func calcularTotal(carrito []sqlc.GetCartItemsRow) float64 {
+	// Aquí deberías implementar la lógica para calcular el total del carrito
+	total := 0.0
+	for _, item := range carrito {
+		total += calcularPrecioTotal(item.Cantidad, item.Precio)
+	}
+	return total
+}
+
+func generadorRuta(idItem int32) string {
+	return "/carrito/items/" + strconv.Itoa(int(idItem))
 }
 
 var _ = templruntime.GeneratedTemplate

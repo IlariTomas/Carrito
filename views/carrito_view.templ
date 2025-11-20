@@ -10,29 +10,37 @@ templ CarritoList(carrito []sqlc.GetCartItemsRow) {
         <p>El carrito está vacío</p>
     } else {
         for _, p := range carrito {
-            <div class="compra-item">
-                <div>
-                    <h2>{ p.NombreProducto }</h2>
-                    <p>Cantidad: { p.Cantidad }</p>
-                </div>
+            <div >
+                <h2>{ p.NombreProducto }</h2>
+                <div class="compra-item">
+                    <div>
+                        <p>Cantidad: 
+                        <input type="number" class="cantidad-input" value={ p.Cantidad } min="1" />
+                        </p>
+                    </div>
 
-                <div class="compra-item-right">
-                    <p>Total: </p>
+                    <div class="compra-item-right">
+                        <p>Total: { calcularPrecioTotal(p.Cantidad, p.Precio) }</p>
 
-                    <button 
-                        class="eliminar-compra-button"
-                        hx-delete={"/carrito/items/" + strconv.Itoa(int(p.IDProducto))}
-                        hx-target="#listado-compras"
-                        hx-swap="innerHTML"
-                    >
-                        🗑️
-                    </button>
+                        <button 
+                            class="eliminar-compra-button"
+                            hx-delete={generadorRuta(p.IDItem)}
+                            hx-target="#listado-compras"
+                            hx-swap="innerHTML"
+                        >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 64 64" role="img" aria-label="Tarro de basura">
+                            <title>Tarro de basura</title>
+                            <path d="M20 18 L44 18 L42 50 L22 50 Z M16 14 L48 14 L48 18 L16 18 Z M28 8 L36 8 L36 14 L28 14 Z" 
+                                    fill="#FFFFFF" stroke="#C7C7C7" stroke-width="2"/>
+                        </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         }
 
         <div>
-            <h5>Total a pagar: </h5>
+            <h5>Total a pagar: { calcularTotal(carrito) }</h5>
         </div>
 
         <div class="acciones-carrito">
@@ -40,7 +48,9 @@ templ CarritoList(carrito []sqlc.GetCartItemsRow) {
                 Finalizar compra
             </button>
 
-            <button>
+            <button hx-delete="/carrito"
+                    hx-target="#listado-compras"
+                    hx-swap="innerHTML">
                 Vaciar carrito
             </button>
         </div>
@@ -59,4 +69,24 @@ templ carritoScript() {
       });
     });
   </script>
+}
+
+func calcularPrecioTotal(cantidad int32, precio string) float64 {
+    precioFloat, err := strconv.ParseFloat(precio, 64)
+    if err != nil {
+        return 0.0
+    }
+    return float64(cantidad) * precioFloat
+}
+func calcularTotal(carrito []sqlc.GetCartItemsRow) float64 {
+    // Aquí deberías implementar la lógica para calcular el total del carrito
+    total := 0.0
+    for _, item := range carrito {
+        total += calcularPrecioTotal(item.Cantidad, item.Precio)
+    }
+    return total
+}
+
+func generadorRuta(idItem int32) string {
+    return "/carrito/items/" + strconv.Itoa(int(idItem))
 }

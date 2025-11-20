@@ -100,7 +100,7 @@ func HeaderProductos() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<header class=\"header\"><nav><ul class=\"main-nav\"><li class=\"logo\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"32\" height=\"32\"><path fill=\"none\" stroke=\"black\" stroke-width=\"2\" d=\"M4 12h4l3-6 3 12 3-6h3\"></path></svg> <span class=\"title-logo\">Carrito web App</span></li><li class=\"push\"><a href=\"/products\">Agregar Productos</a></li><li><a href=\"/users\">Agregar Usuarios</a></li></ul></nav></header>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<header class=\"header\"><nav><ul class=\"main-nav\"><li class=\"logo\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"32\" height=\"32\"><path fill=\"none\" stroke=\"black\" stroke-width=\"2\" d=\"M4 12h4l3-6 3 12 3-6h3\"></path></svg> <span class=\"title-logo\">Carrito web App</span></li><li class=\"push\"><a href=\"/products\">Agregar Productos</a></li></ul></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -37,7 +37,6 @@ func main() {
 	mux.HandleFunc("/login", handle.LoginHandler(queries))
 	mux.HandleFunc("/register", handle.RegisterHandler(queries))
 	mux.HandleFunc("/logout", handle.LogoutHandler())
-	mux.HandleFunc("/users", handle.UsersHandler(queries))
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
 	mux.HandleFunc("/carrito", handle.CartHandler(queries))
 	mux.HandleFunc("/carrito/items/", handle.CartItemHandler(queries))

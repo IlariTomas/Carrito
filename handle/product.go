@@ -15,20 +15,30 @@ import (
 func IndexPageHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// Asegurar que es la ruta raíz exacta
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
 
-		// Leer la cookie de sesión
-		_, err := r.Cookie("session_token")
+		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			// Si hay error (ej: cookie no existe), redirigimos al login
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
+		idInt, err := strconv.Atoi(cookie.Value)
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		_, err = queries.GetUser(r.Context(), int32(idInt))
+		if err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		// Renderizar vista lista
 		views.Layout().Render(r.Context(), w)
 	}
 }

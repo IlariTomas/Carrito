@@ -14,9 +14,9 @@ func CartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
-			getCartHandler(queries)(w, r) // GET /carrito/{id}
+			getCartHandler(queries)(w, r) // GET /carrito
 		case http.MethodDelete:
-			deleteCartHandler(queries)(w, r) // DELETE /carrito/{id}
+			deleteCartHandler(queries)(w, r) // DELETE /carrito
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
@@ -26,14 +26,19 @@ func CartHandler(queries *sqlc.Queries) http.HandlerFunc {
 // getCartHandler obtiene los items de un carrito por su ID
 func getCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/carrito/"):]
-		id, err := strconv.Atoi(idStr)
+		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			http.Error(w, "ID de carrito inválido", http.StatusBadRequest)
+			http.Error(w, "No hay sesión activa", http.StatusUnauthorized)
 			return
 		}
 
-		// Obtener todos los items del carrito
+		id, err := strconv.Atoi(cookie.Value)
+		if err != nil {
+			http.Error(w, "ID de usuario inválido", http.StatusBadRequest)
+			return
+		}
+
+		// Obtener items del carrito
 		carritoItems, err := queries.GetCartItems(r.Context(), int32(id))
 		if err != nil {
 			if err == sql.ErrNoRows {
@@ -44,7 +49,6 @@ func getCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		// Renderizar la vista templ
 		componente := views.CarritoList(carritoItems)
 		componente.Render(r.Context(), w)
 	}
@@ -52,8 +56,8 @@ func getCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func deleteCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/carrito/"):]
-		id, err := strconv.Atoi(idStr)
+		idStr, err := r.Cookie("session_token")
+		id, err := strconv.Atoi(idStr.Value)
 		if err != nil {
 			http.Error(w, "ID de carrito inválido", http.StatusBadRequest)
 			return
@@ -64,6 +68,20 @@ func deleteCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 			http.Error(w, "Error al eliminar carrito: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// Obtener items del carrito
+		carritoItems, err := queries.GetCartItems(r.Context(), int32(id))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.NotFound(w, r)
+			} else {
+				http.Error(w, "Error al obtener productos: "+err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		componente := views.CarritoList(carritoItems)
+		componente.Render(r.Context(), w)
 
 		w.WriteHeader(http.StatusNoContent)
 	}
@@ -88,8 +106,9 @@ func CartItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func addCartHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		idUsuarioStr, err := r.Cookie("session_token")
+		idUsuario, err := strconv.Atoi(idUsuarioStr.Value)
 
-		idUsuario := 1
 		idStr := r.URL.Path[len("/carrito/items/"):]
 		idProducto, err := strconv.Atoi(idStr)
 		if err != nil {
@@ -171,7 +190,7 @@ func updateItemHandler(queries *sqlc.Queries) http.HandlerFunc {
 
 func deleteCartItemsHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/carrito/items"):]
+		idStr := r.URL.Path[len("/carrito/items/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de carrito inválido", http.StatusBadRequest)
@@ -183,6 +202,23 @@ func deleteCartItemsHandler(queries *sqlc.Queries) http.HandlerFunc {
 			http.Error(w, "Error al eliminar producto del carrito: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		cookie, _ := r.Cookie("session_token")
+		id_usuario, _ := strconv.Atoi(cookie.Value)
+
+		// Obtener items del carrito
+		carritoItems, err := queries.GetCartItems(r.Context(), int32(id_usuario))
+		if err != nil {
+			if err == sql.ErrNoRows {
+				http.NotFound(w, r)
+			} else {
+				http.Error(w, "Error al obtener productos: "+err.Error(), http.StatusInternalServerError)
+			}
+			return
+		}
+
+		componente := views.CarritoList(carritoItems)
+		componente.Render(r.Context(), w)
 
 		w.WriteHeader(http.StatusNoContent)
 	}

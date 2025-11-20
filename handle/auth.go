@@ -1,7 +1,9 @@
 package handle
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	sqlc "carrito.com/db/sqlc"
@@ -53,15 +55,7 @@ func ProcessLoginHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		// CREAR SESIÓN
-		expiration := time.Now().Add(24 * time.Hour)
-		cookie := http.Cookie{
-			Name:    "session_token",
-			Value:   "usuario_autenticado_" + email,
-			Expires: expiration,
-			Path:    "/",
-		}
-		http.SetCookie(w, &cookie)
+		CrearSesion(w, user)
 
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusOK)
@@ -118,26 +112,29 @@ func ProcessRegisterHandler(queries *sqlc.Queries) http.HandlerFunc {
 			Email:         email,
 		}
 
-		_, err := queries.CreateUser(r.Context(), params)
+		user, err := queries.CreateUser(r.Context(), params)
 		if err != nil {
-			// Error de base de datos (ej: usuario duplicado)
 			views.AlertError("Error al registrar: prueba con otro usuario/email.").Render(r.Context(), w)
 			return
 		}
-
-		// ÉXITO: Redirigimos al login usando HTMX
-
-		// CREAR SESIÓN
-		expiration := time.Now().Add(24 * time.Hour)
-		cookie := http.Cookie{
-			Name:    "session_token",
-			Value:   "usuario_autenticado_" + email,
-			Expires: expiration,
-			Path:    "/",
-		}
-		http.SetCookie(w, &cookie)
+		log.Print(user)
+		CrearSesion(w, user)
 
 		w.Header().Set("HX-Redirect", "/")
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+func CrearSesion(w http.ResponseWriter, usuario sqlc.Usuario) {
+	expiration := time.Now().Add(24 * time.Hour)
+
+	cookie := http.Cookie{
+		Name:     "session_token",
+		Value:    strconv.Itoa(int(usuario.IDUsuario)), // conversión correcta
+		Expires:  expiration,
+		Path:     "/",
+		HttpOnly: true,
+	}
+
+	http.SetCookie(w, &cookie)
 }
