@@ -5,6 +5,16 @@ import (
     "strconv"
 )
 
+templ AlertSuccess(message string) {
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<strong>¡Éxito!</strong> { message }
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="mt-2">
+            <a href="/sales" class="btn btn-sm btn-outline-success">Ver mis compras</a>
+        </div>
+	</div>
+}
+
 templ CarritoList(carrito []sqlc.GetCartItemsRow) {
     if len(carrito) == 0 {
         <p>El carrito está vacío</p>
@@ -44,13 +54,18 @@ templ CarritoList(carrito []sqlc.GetCartItemsRow) {
         </div>
 
         <div class="acciones-carrito">
-            <button>
+            <button 
+                hx-post="/sales"
+                hx-target="#listado-compras"
+                hx-swap="innerHTML"
+                hx-confirm="¿Confirmar la compra por el total?">
                 Finalizar compra
             </button>
 
             <button hx-delete="/carrito"
                     hx-target="#listado-compras"
-                    hx-swap="innerHTML">
+                    hx-swap="innerHTML"
+                    hx-confirm="¿Estás seguro de vaciar el carrito?">
                 Vaciar carrito
             </button>
         </div>

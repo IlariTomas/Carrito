@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("/carrito", handle.CartHandler(queries))
 	mux.HandleFunc("/carrito/items/", handle.CartItemHandler(queries))
 	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
+	mux.HandleFunc("/sales", handle.SalesHandler(queries))
 
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)

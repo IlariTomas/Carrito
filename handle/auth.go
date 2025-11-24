@@ -130,7 +130,7 @@ func CrearSesion(w http.ResponseWriter, usuario sqlc.Usuario) {
 
 	cookie := http.Cookie{
 		Name:     "session_token",
-		Value:    strconv.Itoa(int(usuario.IDUsuario)), // conversión correcta
+		Value:    strconv.Itoa(int(usuario.IDUsuario)),
 		Expires:  expiration,
 		Path:     "/",
 		HttpOnly: true,

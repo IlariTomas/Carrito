@@ -30,7 +30,6 @@ go.work.sum
 ./Prueba
 ./tester
 
-./handle/user.go
 # Editor/IDE
 # .idea/
 # .vscode/

@@ -26,11 +26,11 @@ Carrito/
 │ ├── auth.go
 │ ├── carrito.go
 | ├── product.go
-│ ├── user.go
 │ └── ventas.go
 |
 │── views/             # Plantillas (templates) usadas por el servidor Go│ 
 | ├── carrito.templ
+| ├── ventas_view.templ
 | ├── components.templ
 | ├── layout_productos.templ
 │ ├── layout_user.templ
