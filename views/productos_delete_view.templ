@@ -1,0 +1,37 @@
+package views
+
+import (
+    sqlc "carrito.com/db/sqlc"
+    "strconv"
+)
+
+templ ProductListDelete(productos []sqlc.Producto) {
+    for _, p := range productos {
+        <div class="product">
+            <div class="product-image">
+                if p.Imagen != "" {
+                    <img src={ p.Imagen } alt={ p.NombreProducto }/>
+                } else {
+                    <img src="https://images.wondershare.com/repairit/article/error-image-error-loading-1.jpeg" alt={ p.NombreProducto }/>
+                }
+            </div>
+            <h3 class="product-name">{ p.NombreProducto }</h3>
+            <p class="product-price">${ p.Precio }</p>
+            <p class="product-description">
+                if p.Descripcion != "" {
+                    { p.Descripcion }
+                } else {
+                    "Descripción no disponible."
+                }
+            </p>
+            <button 
+                class="delete-product-btn"
+                hx-delete={"/products/" + strconv.Itoa(int(p.IDProducto))}
+                hx-target="#product-list"
+                hx-swap="innerHTML"
+            >
+                Eliminar Producto
+            </button>
+        </div>
+    }
+}

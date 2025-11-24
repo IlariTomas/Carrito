@@ -106,9 +106,8 @@ func createProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		// Respuesta JSON
 		w.WriteHeader(http.StatusCreated)
-		views.ProductList(productos).Render(r.Context(), w)
+		views.ProductListDelete(productos).Render(r.Context(), w)
 	}
 }
 
@@ -134,7 +133,7 @@ func ProductHandler(queries *sqlc.Queries) http.HandlerFunc {
 // Producto: DELETE /products/{id}
 func deleteProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.URL.Path[len("/product/"):]
+		idStr := r.URL.Path[len("/products/"):]
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
 			http.Error(w, "ID de producto inválido", http.StatusBadRequest)
@@ -147,7 +146,14 @@ func deleteProdHandler(queries *sqlc.Queries) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusNoContent)
+		productos, err := queries.ListProd(r.Context())
+		if err != nil {
+			http.Error(w, "Error cargando productos: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		views.ProductListDelete(productos).Render(r.Context(), w)
 	}
 }
 
@@ -177,6 +183,34 @@ func ListProductsHandler(queries *sqlc.Queries) http.HandlerFunc {
 		}
 
 		componente := views.ProductList(productos)
+		componente.Render(r.Context(), w)
+	}
+}
+
+func ListProductsViewHandler(queries *sqlc.Queries) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sortBy := r.URL.Query().Get("sort")
+		var (
+			productos []sqlc.Producto
+			err       error
+		)
+
+		switch sortBy {
+		case "price-asc":
+			productos, err = queries.ListProductsByPriceAsc(r.Context())
+		case "price-desc":
+			productos, err = queries.ListProductsByPriceDesc(r.Context())
+		default:
+			productos, err = queries.ListProd(r.Context())
+		}
+
+		if err != nil {
+			log.Printf("Error al obtener productos para templ: %v", err)
+			http.Error(w, "Error al obtener productos: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		componente := views.ProductListDelete(productos)
 		componente.Render(r.Context(), w)
 	}
 }

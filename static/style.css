@@ -215,6 +215,17 @@ header {
   background-color: #1976d2;
 }
 
+.delete-product-btn{
+  background-color: #ed2929;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: auto
+}
+
 
 /*FOOTER*/
 footer {

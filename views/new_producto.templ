@@ -1,7 +1,13 @@
 package views
 
 templ FormProduct(){
-    <form class="form" method="POST" action="/products" id="create-product-form">
+    <form 
+        class="form" 
+        id="create-product-form"
+        hx-post="/products"
+        hx-target="#product-list"
+        hx-on::after-request="if(event.detail.successful) this.reset()"
+    >
         <div class="form-group">
         <div class="option-texts">
             <label for="p-nombre">Nombre del Producto</label>
@@ -42,12 +48,9 @@ templ FormProduct(){
         <textarea id="p-descripcion" name="descripcion" rows="3" placeholder="Ingrese la descripción del producto"></textarea>
         </div>
         
-        <button 
-            type="submit"
-            class="btn"
-            hx-post="/products"
-            hx-target="#product-list">
+        <button type="submit" class="btn">
             Agregar Producto
         </button>
+
     </form>
 }

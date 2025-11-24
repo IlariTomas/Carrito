@@ -55,7 +55,7 @@ func ProductView() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><section class=\"list-section\"><div class=\"sort-container\"><select name=\"sort\" id=\"order-select\" hx-get=\"/list-products\" hx-target=\"#product-list\" hx-trigger=\"change, load\"><option value=\"\" selected>Ordenar por Nombre</option> <option value=\"price-asc\">▲ Precio (Menor a Mayor)</option> <option value=\"price-desc\">▼ Precio (Mayor a Menor)</option></select></div><div id=\"product-list\" class=\"list\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</section><section class=\"list-section\"><div class=\"sort-container\"><select name=\"sort\" id=\"order-select\" hx-get=\"/list-products-view\" hx-target=\"#product-list\" hx-trigger=\"change, load\"><option value=\"\" selected>Ordenar por Nombre</option> <option value=\"price-asc\">▲ Precio (Menor a Mayor)</option> <option value=\"price-desc\">▼ Precio (Mayor a Menor)</option></select></div><div id=\"product-list\" class=\"list\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

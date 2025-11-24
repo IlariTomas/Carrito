@@ -38,9 +38,11 @@ func main() {
 	mux.HandleFunc("/register", handle.RegisterHandler(queries))
 	mux.HandleFunc("/logout", handle.LogoutHandler())
 	mux.HandleFunc("/products", handle.ProductsHandler(queries))
+	mux.HandleFunc("/products/", handle.ProductHandler(queries))
 	mux.HandleFunc("/carrito", handle.CartHandler(queries))
 	mux.HandleFunc("/carrito/items/", handle.CartItemHandler(queries))
 	mux.HandleFunc("/list-products", handle.ListProductsHandler(queries))
+	mux.HandleFunc("/list-products-view", handle.ListProductsViewHandler(queries))
 	mux.HandleFunc("/sales", handle.SalesHandler(queries))
 
 	port := ":8080"

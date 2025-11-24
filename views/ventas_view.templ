@@ -12,12 +12,10 @@ templ SalesList(ventas []sqlc.Ventum) {
     <html lang="es">
     @Head("Listado ventas")
     <body>
+        @HeaderLayout()
         <div class="container mt-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex justify-content-center align-items-center mb-4">
                 <h1 class="fw-bold">Historial de Compras</h1>
-                <a href="/" class="btn btn-outline-primary">
-                    &larr; Volver a la tienda
-                </a>
             </div>
 
             if len(ventas) == 0 {
